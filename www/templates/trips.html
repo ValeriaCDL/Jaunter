@@ -1,0 +1,12 @@
+<ion-view view-title="Viajes">
+  <ion-content>
+    <ion-list>
+      <ion-item ng-repeat="trip in trips" href="#/jaunter/Trips/{{trip.id}}">
+        {{trip.departure}} {{car.arrive}}
+      </ion-item>
+    </ion-list>
+
+    <a href="#/jaunter/addTrip" style="color: green;" class="button button-icon icon ion-plus-circled"></a>
+
+  </ion-content>
+</ion-view>

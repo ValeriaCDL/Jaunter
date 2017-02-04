@@ -1,0 +1,42 @@
+<ion-view view-title="Agregar Carro">
+  <ion-content>
+
+  <form ng-submit="notyet()">
+    <div class="list">
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Marca</span>
+        <input type="text" placeholder="Marca" ng-model="not.yet">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Modelo</span>
+        <input type="text" placeholder="Modelo">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Año</span>
+        <input type="number" placeholder="Año" min="1900" max="2017">
+        <!-- y si cambia el año?? -->
+      </label>
+      <label class="item item-input item-select">
+        <div class="input-label">Color</div>
+        <select>
+          <!-- despus ponemos el ngmodel -->
+          <option value="blanco">blanco</option>
+          <option value="negro">negro</option>
+          <option value="azul">azul</option>
+        </select>
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">No. de asientos</span>
+        <input type="number" placeholder="No. de asientos" min="2" max="10">
+      </label>
+      <label class="item item-input item-floating-label">
+        <span class="input-label">Descripción</span>
+        <input type="text" placeholder="Descripción" maxlength="200">
+      </label>
+
+
+    </div>
+    <button class="button button-positive" type="submit">Agregar</button>
+  </form>
+  </ion-content>
+</ion-view>
