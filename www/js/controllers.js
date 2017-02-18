@@ -1,4 +1,4 @@
-angular.module('jaunter.controllers', ['ionic-timepicker'])
+angular.module('jaunter.controllers', ['ionic-timepicker','jaunter.services'])
 
 .controller('AppCtrl', function($scope, $ionicModal, $timeout) {
 
@@ -41,23 +41,10 @@ angular.module('jaunter.controllers', ['ionic-timepicker'])
   };
 })
 
-.controller('CarsCtrl', function($scope,$http) {
-  // $scope.Cars = [
-  //   { title: 'Honda', id: 1 },
-  //   { title: 'Mazda', id: 2 },
-  //   { title: 'Mitsubishi', id: 3 },
-  //   { title: 'Ford', id: 4 },
-  //   { title: 'Renault', id: 5 },
-  //   { title: 'Otro', id: 6 }
-  // ];
-
-  $http.get("https://enigmatic-river-82723.herokuapp.com/api/Autos?access_token=nSUwbIVzPQRFISVFxhWKTGs6JwBPiixgaJ6bGGIGw0t44PSMFNEqCI2jnBjqz2SA")
-  .then(function(response){
-    $scope.Cars = response.data;
-  })
-})
-
-.controller('CarCtrl', function($scope, $stateParams) {
+.controller('CarsCtrl', function($scope,CarService) {
+  CarService.Get().then(function(c) {
+    $scope.Cars = c;
+  });
 })
 
 .controller('TripCtrl', function($scope){
