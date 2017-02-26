@@ -3,7 +3,7 @@ angular.module('jaunter.routes', [])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('jaunter', {
+  .state('jaunter', {
     url: '/jaunter',
     abstract: true,
     templateUrl: 'templates/menu.html',
@@ -36,7 +36,7 @@ angular.module('jaunter.routes', [])
           }
         }
       })
-    .state('jaunter.Cars', {
+    .state('jaunter.cars', {
       url: '/Cars',
       views: {
         'menuContent': {
@@ -51,12 +51,12 @@ angular.module('jaunter.routes', [])
       views: {
         'menuContent': {
           templateUrl: 'templates/addcar.html',
-          //controller: 'CarsCtrl'
+          controller: 'CarFormCtrl'
         }
       }
     })
 
-  .state('jaunter.single', {
+  .state('jaunter.car', {
     url: '/Cars/:carId',
     views: {
       'menuContent': {

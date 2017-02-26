@@ -1,25 +1,24 @@
 <ion-view view-title="Agregar Carro">
   <ion-content>
 
-  <form ng-submit="notyet()">
+  <form ng-submit="post(car)">
     <div class="list">
       <label class="item item-input item-floating-label">
         <span class="input-label">Marca</span>
-        <input type="text" placeholder="Marca" ng-model="not.yet">
+        <input type="text" placeholder="Marca" ng-model="car.marca">
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Modelo</span>
-        <input type="text" placeholder="Modelo">
+        <input type="text" placeholder="Modelo" ng-model="car.modelo">
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Año</span>
-        <input type="number" placeholder="Año" min="1900" max="2017">
+        <input type="number" placeholder="Año" min="1900" max="2017" ng-model="car.anio">
         <!-- y si cambia el año?? -->
       </label>
       <label class="item item-input item-select">
         <div class="input-label">Color</div>
-        <select>
-          <!-- despus ponemos el ngmodel -->
+        <select ng-model="car.color">
           <option value="blanco">blanco</option>
           <option value="negro">negro</option>
           <option value="azul">azul</option>
@@ -31,7 +30,7 @@
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Descripción</span>
-        <input type="text" placeholder="Descripción" maxlength="200">
+        <input type="text" placeholder="Descripción" maxlength="200" ng-model="car.comentario">
       </label>
 
 
