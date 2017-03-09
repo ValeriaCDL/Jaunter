@@ -36,6 +36,33 @@ angular.module('jaunter.routes', [])
           }
         }
       })
+      .state('jaunter.originTrip', {
+          url: '/originTrip',
+          views: {
+            'menuContent': {
+              templateUrl: 'templates/originTrip.html',
+              controller: 'OriginMapCtrl'
+            }
+          }
+        })
+        .state('jaunter.googleRouteMap', {
+            url: '/googleRouteMap',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/googleRouteMap.html',
+                controller: 'GoogleMapCtrl'
+              }
+            }
+          })
+    .state('jaunter.customRouteMap', {
+        url: '/customRouteMap',
+        views: {
+          'menuContent': {
+      templateUrl: 'templates/customRouteMap.html',
+          controller: 'CustomMapCtrl'
+          }
+        }
+    })
     .state('jaunter.cars', {
       url: '/Cars',
       views: {

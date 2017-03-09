@@ -1,0 +1,7 @@
+#inputAddress{
+  width:  90%;
+}
+#acceptRoute,#customRoute,#cleanMap,#generateRoute{
+  width: 50%;
+display: inline;
+}

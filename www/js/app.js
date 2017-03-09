@@ -1,5 +1,5 @@
 
-angular.module('jaunter', ['ionic', 'jaunter.shared','jaunter.routes','jaunter.cars','jaunter.trips'])
+angular.module('jaunter', ['ionic', 'jaunter.shared','jaunter.routes','jaunter.cars','jaunter.trips','jaunter.map'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
