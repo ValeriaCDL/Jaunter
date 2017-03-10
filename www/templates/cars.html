@@ -1,12 +1,12 @@
 <ion-view view-title="Carros">
   <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="car in Cars" href="#/jaunter/Cars/{{car.id}}">
+    <div class="list list-inset">
+      <ion-item ng-repeat="car in Cars" class="itemCar" href="#/jaunter/Cars/{{car.id}}">
         {{car.marca}} {{car.modelo}}
       </ion-item>
-    </ion-list>
-
-    <a href="#/jaunter/addCar" style="color: green;" class="button button-icon icon ion-plus-circled"></a>
-
+    </div>
   </ion-content>
+  <div class="bar bar-footer">
+  <a class="button button-clear button-positive  footerBtn" href="#/jaunter/addCar">+ Agregar</a>
+</div>
 </ion-view>

@@ -2,8 +2,13 @@
   <ion-pane>
     <ion-content id="map"></ion-content>
     <div  class="bar bar-footer">
-        <input type="text" placeholder="Direccion" id="inputAddress" ng-model="trip.origin">
-      <button class="button button-positive" type="submit" ng-click="searchAddressMap()">Buscar</button>
-  </div>
+      <label class="item item-input col-35">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="text" placeholder="Buscar"  ng-model="trip.origin" id="inputAddress">
+      </label>
+      <button class="button button-positive col-15" type="button" ng-click="searchAddressMap()" style="margin-left:5px;">Buscar</button>
+      <button class="button button-energized col-15" type="button" ng-click="editAddressMap() ">Editar</button>
+      <button class="button button-positive col-15" type="button"  ng-click="acceptMap()">Aceptar</button>
+    </div>
   </ion-pane>
 </ion-view>
