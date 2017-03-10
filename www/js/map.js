@@ -82,7 +82,7 @@ function geocodeLatLng(geocoder,map,origin) {
 
     if (status === google.maps.GeocoderStatus.OK) {
       if (results[1]) {
-      resultStr.push(results[1].formatted_address);
+      alert(results[1].formatted_address);
 
       } else {
         alert ('No results found');
