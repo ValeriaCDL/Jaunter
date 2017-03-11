@@ -6,17 +6,16 @@
       <ion-item>
         <!-- hacer luego la accion del boton, tal vez puede ser referencia en vez de boton <a> -->
           <a class="button button-dark button-block" href="#/jaunter/originTrip" >Dirección origen</a>
-        <label class="labelTrip">{{direccionOrigen}}</label>
+        <label class="labelTrip">{{trip.origin}}</label>
       </ion-item>
       <ion-item>
           <a class="button button-dark button-block" href="#/jaunter/originTrip">Dirección destino</a>
-        <label class="labelTrip">{{direccionDestino}}</label>
+        <label class="labelTrip">{{trip.destination}}</label>
       </ion-item>
       <ion-item>
           <a class="button button-dark button-block" href="#/jaunter/googleRouteMap">Crear Ruta</a>
         <label class="labelTrip">{{rutaCorrecta}}</label>
       </ion-item>
-
       <ion-item>
         <ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="timePickerCallback">
           <button class="button button-block button-dark"> Hora de Salida </button>

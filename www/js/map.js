@@ -3,7 +3,8 @@ var labelIndex = 0;
 var markers =[];
 var resultStr=[];
 angular.module('jaunter.map',[])
-.controller('OriginMapCtrl', function($scope){
+.controller('OriginMapCtrl', function($scope,$ionicHistory,TripFactory){
+
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {
     center: ensenadaLatLng,
@@ -15,19 +16,29 @@ angular.module('jaunter.map',[])
   $scope.map = map;
   $scope.searchAddressMap = function(){
     geocodeAddress(geocoder, map,$scope);
+    $scope.hidden = true;
   }
   $scope.editAddressMap = function(){
     deleteMarkers();
+    $scope.hidden = false;
   }
   $scope.acceptMap = function(){
     var newMarker = markers[0];
     var origin = newMarker.position;
-    geocodeLatLng(geocoder, map,origin);
+    geocoder.geocode({'location': origin}, function(results, status) {
 
-
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (results[1]) {
+            TripFactory.origin = results[1].formatted_address;
+          } else {
+            TripFactory.origin = 'No results found';
+          }
+        } else {
+          TripFactory.origin = 'Geocoder failed due to: ' + status;
+        }
+      });
+    $ionicHistory.goBack();
   }
-
-
 })
 .controller('GoogleMapCtrl', function($scope){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
@@ -74,25 +85,8 @@ angular.module('jaunter.map',[])
     }
     directionsDisplay.setMap(map);
     $scope.map = map;
-})
+});
 
-function geocodeLatLng(geocoder,map,origin) {
-
-  geocoder.geocode({'location': origin}, function(results, status) {
-
-    if (status === google.maps.GeocoderStatus.OK) {
-      if (results[1]) {
-      alert(results[1].formatted_address);
-
-      } else {
-        alert ('No results found');
-      }
-    } else {
-      alert( 'Geocoder failed due to: ' + status);
-    }
-  });
-
-}
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
@@ -104,7 +98,6 @@ function clearMarkers() {
 function deleteMarkers() {
   clearMarkers();
   markers = [];
-
 }
   function calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,origin,destination) {
     directionsService.route({

@@ -1,7 +1,10 @@
 
 angular.module('jaunter.trips', ['ionic-timepicker'])
 
-.controller('TripCtrl', function($scope){
+.controller('TripCtrl', function($scope,TripFactory){
+
+ $scope.trip = TripFactory;
+
   $scope.slots = {epochTime: 12600, format: 12, step: 15};
 
   $scope.timePickerCallback = function (val) {
@@ -12,3 +15,15 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     }
   };
 })
+.factory('TripFactory', function(){
+
+  var trip = {
+    origin:'',
+    destination:'',
+    route:'',
+    departureTime:'',
+    arrivalTime:''
+  };
+
+  return trip;
+});
