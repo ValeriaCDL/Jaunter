@@ -1,0 +1,17 @@
+<ion-view>
+  <ion-pane>
+    <ion-content id="originMap">
+
+    </ion-content>
+    <div  class="bar bar-footer">
+        <label class="item item-input col-75" ng-hide="hidden">
+          <i class="icon ion-search placeholder-icon"></i>
+          <input type="search" placeholder="Buscar"  ng-model="trip.origin" id="inputAddress">
+        </label>
+        <button class="button button-positive col-25" type="button" ng-hide="hidden" ng-click="searchAddressMap()" style="margin-left:5px;">Buscar</button>
+
+        <button class="button button-energized icon-left ion-edit " type="button" ng-hide="!hidden" ng-click="editAddressMap() ">Editar</button>
+        <button class="button button-positive icon-left ion-checkmark" type="button"  ng-hide="!hidden" ng-click="acceptMap()">Aceptar</button>
+    </div>
+  </ion-pane>
+</ion-view>

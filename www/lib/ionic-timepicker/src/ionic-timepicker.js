@@ -110,7 +110,7 @@ angular.module('ionic-timepicker', ['ionic', 'ionic-timepicker.templates'])
                   }
                 },
                 {
-                  text: 'Listo',
+                  text: 'Aceptar',
                   type: 'button-positive',
                   onTap: function (e) {
                     scope.loadingContent = true;

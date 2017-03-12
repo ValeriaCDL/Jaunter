@@ -40,11 +40,20 @@ angular.module('jaunter.routes', [])
           url: '/originTrip',
           views: {
             'menuContent': {
-              templateUrl: 'templates/originTrip.html',
+              templateUrl: 'templates/originMap.html',
               controller: 'OriginMapCtrl'
             }
           }
         })
+        .state('jaunter.destinationTrip', {
+            url: '/destinationTrip',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/destinationMap.html',
+                controller: 'DestinationMapCtrl'
+              }
+            }
+          })
         .state('jaunter.googleRouteMap', {
             url: '/googleRouteMap',
             views: {
