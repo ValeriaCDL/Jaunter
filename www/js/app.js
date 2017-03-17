@@ -10,7 +10,7 @@ angular.module('jaunter', ['ionic', 'jaunter.shared','jaunter.routes','jaunter.c
     }
     if (window.StatusBar) {
       // org.apache.cordova.statusbar required
-      StatusBar.styleDefault();
+      StatusBar.styleBlackTranslucent();
     }
   });
 })

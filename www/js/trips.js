@@ -1,7 +1,7 @@
 
 angular.module('jaunter.trips', ['ionic-timepicker'])
 
-.controller('TripCtrl', function($scope,TripFactory,ClickValidationFactory,$state){
+.controller('TripCtrl', function($scope,TripFactory,ClickValidationFactory,$state,$ionicPopup){
   $scope.trip = TripFactory;
   $scope.hidden=true;
   $scope.slots = {epochTime: 12600, format: 12, step: 5};
@@ -112,11 +112,9 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     }
   };
   $scope.checkObj = function (){
-
     console.log(TripFactory);
   }
   $scope.validClick = function(event){
-
     switch (event.target.id) {
       case 'destinationBtn':
       if(ClickValidationFactory.origin==true){

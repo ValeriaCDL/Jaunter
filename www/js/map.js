@@ -2,21 +2,22 @@ var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 var labelIndex = 0;
 var markers =[];
 var resultStr=[];
+var wayPoints=[];
 angular.module('jaunter.map',[])
 .directive("mapView", function() {
-    return {
+  return {
 
       //La idea es hacer una directiva del mapa
     };
-})
-.controller('OriginMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$ionicPopup){
+  })
+.controller('OriginMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13,mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("originMap"), mapOptions);
   var geocoder = new google.maps.Geocoder();
   $scope.map = map;
   $scope.searchAddressMap = function(){
-      var address = document.getElementById('inputAddress').value;
+    var address = document.getElementById('inputAddress').value;
     geocodeAddress(geocoder, map,address);
     $scope.hidden = true;
   }
@@ -28,18 +29,18 @@ angular.module('jaunter.map',[])
     var newMarker = markers[0];
     var origin = newMarker.position;
     geocoder.geocode({'location': origin}, function(results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-          if (results[1]) {
-            TripFactory.origin = results[1].formatted_address;
-            TripFactory.originLatLng = origin;
-            markers=[];
-          } else {
-            TripFactory.origin = 'No results found';
-          }
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[1]) {
+          TripFactory.origin = results[1].formatted_address;
+          TripFactory.originLatLng = origin;
+          markers=[];
         } else {
-          TripFactory.origin = 'Geocoder failed due to: ' + status;
+          TripFactory.origin = 'No results found';
         }
-      });
+      } else {
+        TripFactory.origin = 'Geocoder failed due to: ' + status;
+      }
+    });
     ClickValidationFactory.origin=true;
     $ionicHistory.goBack();
   }
@@ -51,7 +52,7 @@ angular.module('jaunter.map',[])
   var geocoder = new google.maps.Geocoder();
   $scope.map = map;
   $scope.searchAddressMap = function(){
-      var address = document.getElementById('inputAddressDestination').value;
+    var address = document.getElementById('inputAddressDestination').value;
     geocodeAddress(geocoder, map,address);
     $scope.hidden = true;
   }
@@ -64,86 +65,72 @@ angular.module('jaunter.map',[])
     var destination = newMarker.position;
     geocoder.geocode({'location': destination}, function(results, status) {
 
-        if (status === google.maps.GeocoderStatus.OK) {
-          if (results[1]) {
-            TripFactory.destination = results[1].formatted_address;
-            TripFactory.destinationLatLng = destination;
-            markers=[];
-          } else {
-            TripFactory.destination = 'No results found';
-          }
+      if (status === google.maps.GeocoderStatus.OK) {
+        if (results[1]) {
+          TripFactory.destination = results[1].formatted_address;
+          TripFactory.destinationLatLng = destination;
+          markers=[];
         } else {
-          TripFactory.destination = 'Geocoder failed due to: ' + status;
+          TripFactory.destination = 'No results found';
         }
-      });
-          ClickValidationFactory.destination=true;
+      } else {
+        TripFactory.destination = 'Geocoder failed due to: ' + status;
+      }
+    });
+    ClickValidationFactory.destination=true;
     $ionicHistory.goBack();
   }
 })
 .controller('GoogleMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13, mapTypeId: google.maps.MapTypeId.ROADMAP};
-    var map = new google.maps.Map(document.getElementById("googleRouteMap"), mapOptions);
-    var directionsService = new google.maps.DirectionsService;
-    var directionsDisplay = new google.maps.DirectionsRenderer;
-    calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,TripFactory.originLatLng,TripFactory.destinationLatLng);
-    directionsDisplay.setMap(map);
-    $scope.map = map;
+  var map = new google.maps.Map(document.getElementById("googleRouteMap"), mapOptions);
+  var directionsService = new google.maps.DirectionsService;
+  var directionsDisplay = new google.maps.DirectionsRenderer;
+  calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,TripFactory.originLatLng,TripFactory.destinationLatLng);
+  directionsDisplay.setMap(map);
+  $scope.map = map;
 
-    $scope.acceptRoute = function(){
-      TripFactory.acceptedRoute = 'Ruta Aceptada';
-      ClickValidationFactory.acceptedRoute=true;
-      $ionicHistory.goBack();
-    }
-  })
-.controller('CustomMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
-    var wayPoints=[];
-    var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
-    // var cetys = new google.maps.LatLng(31.8764534,-116.6564669);
-    // var valleDorado = new google.maps.LatLng(31.8402542,-116.6007235);
-    var mapOptions = {
-      center: ensenadaLatLng,
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
+  $scope.acceptRoute = function(){
+    TripFactory.acceptedRoute = 'Ruta Aceptada';
+    ClickValidationFactory.acceptedRoute=true;
+    $ionicHistory.goBack();
+  }
+})
+.controller('CustomMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$ionicPopup){
+ var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
+      var mapOptions = {center: ensenadaLatLng,zoom: 13,mapTypeId: google.maps.MapTypeId.ROADMAP};
     var map = new google.maps.Map(document.getElementById("customRouteMap"), mapOptions);
-    var cetysMarker = new google.maps.Marker({
-      position: TripFactory.destinationLatLng,
-      map: map
-    });
-
-    var originMarker = new google.maps.Marker({
-      position: TripFactory.originLatLng,
-      map: map
-    });
-
+    var cetysMarker = new google.maps.Marker({position: TripFactory.destinationLatLng,map: map});
+    var originMarker = new google.maps.Marker({position: TripFactory.originLatLng,map: map});
     var directionsService = new google.maps.DirectionsService;
     var directionsDisplay = new google.maps.DirectionsRenderer;
-    map.addListener('click', function(e) {
-      placeMarkerAndPanTo(e.latLng, map);
-      wayPoints.push({location:e.latLng});
-    });
-    $scope.generateRoute = function(){
-      calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
-       $scope.hidden = true;
-    }
-    $scope.cleanMap = function(){
 
+    map.addListener('click', function(e) {placeMarkerAndPanTo(e.latLng, map);wayPoints.push({location:e.latLng});});
+
+    $scope.generateRoute = function(){
+      TripFactory.waypoints = wayPoints;
+      console.log(TripFactory.waypoints);
+
+      // calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
+      $scope.hidden = true;
     }
-      $scope.acceptRoute = function(){
-        TripFactory.waypoints=wayPoints;
-        TripFactory.acceptedRoute='Ruta Aceptada';
-            ClickValidationFactory.acceptedRoute=true;
-         $ionicHistory.goBack(-2);
-      }
+  
+    $scope.acceptRoute = function(){
+      TripFactory.waypoints=wayPoints;
+      TripFactory.acceptedRoute='Ruta Aceptada';
+      ClickValidationFactory.acceptedRoute=true;
+      $ionicHistory.goBack(-2);
+    }
     directionsDisplay.setMap(map);
     $scope.map = map;
-});
+  });
 
 function setMapOnAll(map) {
   for (var i = 0; i < markers.length; i++) {
     markers[i].setMap(map);
   }
+
 }
 function clearMarkers() {
   setMapOnAll(null);
@@ -152,62 +139,63 @@ function deleteMarkers() {
   clearMarkers();
   markers = [];
 }
-  function calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,origin,destination) {
-    directionsService.route({
-      origin: origin,
-      destination: destination,
-      waypoints: wayPoints,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.DRIVING
-    }, function(response, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        directionsDisplay.setDirections(response);
-      } else {
-        window.alert('Directions request failed due to ' + status);
-      }
-    });
-  }
-  function placeMarkerAndPanTo(latLng, map) {
-    var marker = new google.maps.Marker({
-      position: latLng,
-      map: map,
-      animation: google.maps.Animation.DROP,
-      label:labels[labelIndex++ % labels.length]
-    });
-    map.panTo(latLng);
-  }
+function calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,origin,destination) {
+
+  directionsService.route({
+    origin: origin,
+    destination: destination,
+    waypoints: wayPoints,
+    optimizeWaypoints: true,
+    travelMode: google.maps.TravelMode.DRIVING
+  }, function(response, status) {
+    if (status === google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    } else {
+      window.alert('Directions request failed due to ' + status);
+    }
+  });
+}
+function placeMarkerAndPanTo(latLng, map) {
+  var marker = new google.maps.Marker({
+    position: latLng,
+    map: map,
+    animation: google.maps.Animation.DROP,
+    label:labels[labelIndex++ % labels.length]
+  });
+  map.panTo(latLng);
+}
 
 
-  function geocodeAddress(geocoder, resultsMap,address) {
-    geocoder.geocode({'address': address}, function(results, status) {
-      if (status === google.maps.GeocoderStatus.OK) {
-        resultsMap.setCenter(results[0].geometry.location);
-        var marker = new google.maps.Marker({
-          map: resultsMap,
-          draggable: true,
-          animation: google.maps.Animation.DROP,
-          position: results[0].geometry.location
-        });
-        markers.push(marker);
+function geocodeAddress(geocoder, resultsMap,address) {
+  geocoder.geocode({'address': address}, function(results, status) {
+    if (status === google.maps.GeocoderStatus.OK) {
+      resultsMap.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+        map: resultsMap,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        position: results[0].geometry.location
+      });
+      markers.push(marker);
 
-      } else {
+    } else {
 
         // alert('Geocode was not successful for the following reason: ' + status);
       }
 
     });
-  }
-  function calculateAndDisplayRouteGoogle(directionsService, directionsDisplay,origin,destination) {
-    directionsService.route({
-      origin: origin,
-      destination: destination,
-      optimizeWaypoints: true,
-      travelMode: google.maps.TravelMode.DRIVING
-    }, function(response, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        directionsDisplay.setDirections(response);
+}
+function calculateAndDisplayRouteGoogle(directionsService, directionsDisplay,origin,destination) {
+  directionsService.route({
+    origin: origin,
+    destination: destination,
+    optimizeWaypoints: true,
+    travelMode: google.maps.TravelMode.DRIVING
+  }, function(response, status) {
+    if (status === google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
 
-      } else {
-        window.alert('Directions request failed due to ' + status);
-      }
-    });}
+    } else {
+      window.alert('Directions request failed due to ' + status);
+    }
+  });}

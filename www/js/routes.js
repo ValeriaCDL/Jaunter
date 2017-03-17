@@ -10,11 +10,11 @@ angular.module('jaunter.routes', [])
     controller: 'AppCtrl'
   })
 
-  .state('jaunter.search', {
-    url: '/search',
+  .state('jaunter.Home', {
+    url: '/Home',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'index.html'
       }
     }
   })
@@ -102,5 +102,5 @@ angular.module('jaunter.routes', [])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/jaunter/Cars');
+  $urlRouterProvider.otherwise('/jaunter/Trips');
 });
