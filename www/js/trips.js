@@ -1,7 +1,7 @@
 
 angular.module('jaunter.trips', ['ionic-timepicker'])
 
-.controller('TripCtrl', function($scope,TripFactory,ClickValidationFactory,$state,$ionicPopup){
+.controller('TripCtrl', function($scope,TripFactory,ClickValidationFactory,$state,$ionicPopup,TripSvc){
   $scope.trip = TripFactory;
   $scope.hidden=true;
   $scope.slots = {epochTime: 12600, format: 12, step: 5};
@@ -54,7 +54,16 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 
       }
       ClickValidationFactory.departureTime=true;
-      if(ClickValidationFactory.departureTime==true && ClickValidationFactory.arrivalTime==true && ClickValidationFactory.origin==true && ClickValidationFactory.destination==true && ClickValidationFactory.acceptedRoute){ $scope.hidden=false;}
+      if(ClickValidationFactory.departureTime==true
+        && ClickValidationFactory.arrivalTime==true
+        && ClickValidationFactory.origin==true
+        && ClickValidationFactory.destination==true
+        && ClickValidationFactory.acceptedRoute)
+        {
+          $scope.hidden=false;
+          //como que este if no entra
+          TripFactory.isPopulated = true;
+        }
     }
   };
   $scope.arrivalTimeCallback = function (val) {
@@ -108,11 +117,21 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       }
       ClickValidationFactory.arrivalTime=true;
 
-      if(ClickValidationFactory.departureTime==true && ClickValidationFactory.arrivalTime==true && ClickValidationFactory.origin==true && ClickValidationFactory.destination==true && ClickValidationFactory.acceptedRoute){ $scope.hidden=false;}
+      if(ClickValidationFactory.departureTime==true
+        && ClickValidationFactory.arrivalTime==true
+        && ClickValidationFactory.origin==true
+        && ClickValidationFactory.destination==true
+        && ClickValidationFactory.acceptedRoute)
+        {
+          $scope.hidden=false;
+          //este si entra
+          TripFactory.isPopulated = true;
+        }
     }
   };
   $scope.checkObj = function (){
     console.log(TripFactory);
+    TripSvc.Create();
   }
   $scope.validClick = function(event){
     switch (event.target.id) {
@@ -148,6 +167,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   var trip = {
     origin:'',
     originLatLng:'',
+    simpleOriginLatLng: {},
     destination:'',
     destinationLatLng:'',
     waypoints:'',
@@ -155,7 +175,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     departureTime:'',
     departureTimeText:'',
     arrivalTime:'',
-    arrivalTimeText:''
+    arrivalTimeText:'',
+    isPopulated:false
   };
   return trip;
 })
@@ -169,4 +190,141 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     arrivalTime:false
   };
   return valid;
+})
+.factory('TripSvc',function($http,Constants,TripFactory,LocalizationSvc,SessionSvc,HqSvc){
+  var url =Constants.BaseUrl;
+  var trip, localization, hq, session; //hq es la sede
+
+  var create = function(){
+    //config_sesion (viaje) tiene una sesion,
+    //y esa sesión tiene una localización y una sede, entonces:
+    //1.TripFactory ya debe estar lleno
+    if(!TripFactory.isPopulated)
+      return;
+    //2.Creo el objeto localizacion (la api esta en espa;ol y esos son los nombres)
+    //POR HACER: verificar que el objeto no esta ya creado
+    localization = {
+    "nombre": TripFactory.origin,
+    "coordenadas": TripFactory.simpleOriginLatLng
+    };
+    LocalizationSvc.Create(localization).then(function(response) {
+      localization = response;
+      //3.La sede ya debe estar creada solo tomo el id de.. cuando pongamos a elegir al usuario
+      //es el Cetys Ensenada
+      //en este caso el destino es la sede
+      HqSvc.Get("571587029bbd43cf34ca5793").then(function(response) {
+        hq = response;
+        //4.ligo sede y localizacion con mi sesion
+        session = {
+        "id_localizacion": localization["id"],
+        "id_sede": hq["id"]
+        };
+        SessionSvc.Create(session).then(function(response) {
+          session = response;
+          //5.ligo mi sesion con mi config_sesion (viaje)
+          trip = {
+          "hora_salida": TripFactory.departureTimeText,
+          "hora_llegada": TripFactory.arrivalTimeText,
+          "tipo_usuario": true,  //que es conductor
+          "id_usuario": "5714434c429d899231431566", //no se quien es pero es requerido
+          "id_institucion": hq["id_institucion"],
+          "id_sesion": session["id"]
+          };
+          //no se como guardar la ruta.. ni siquiera se cual es el objeto o array de las rutas... :C
+          saveTrip(trip).then(function(response) {
+            trip = response;
+            return trip; //lo regreso??
+          }); //trip
+        }); //session
+      }); //hq
+    }); //localization
+
+  };
+
+  var saveTrip = function(data) {
+    return $http.post(url+"Config_Sesions?access_token="
+      +Constants.TemporalToken,data)
+    .then(function(r){return r.data;}
+      ,function(r){ return "Error:"+r.error; });
+  };
+
+  return {
+    ///POR HACER: debo regresar todas, pero con el filtro del usuario
+    All: function() {
+      return $http.get(url+"Config_Sesions?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Get: function(id) {
+      return $http.get(url+"Config_Sesions/"+id+"?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Create: create  //la funcion definida arriba
+  };
+})
+.factory('HqSvc',function($http,Constants){
+  var url =Constants.BaseUrl;
+  return {
+    All: function() {
+      return $http.get(url+"Sedes?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Get: function(id) {
+      return $http.get(url+"Sedes/"+id+"?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      },function(r){ return "Error:"+r; });
+    }
+  };
+})
+.factory('LocalizationSvc',function($http,Constants){
+  var url =Constants.BaseUrl;
+  return {
+    All: function() {
+      return $http.get(url+"Localizaciones?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Get: function(id) {
+      return $http.get(url+"Localizaciones/"+id+"?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Create: function(data) {
+      return $http.post(url+"Localizaciones?access_token="
+        +Constants.TemporalToken,data)
+      .then(function(r){return r.data;}
+        ,function(r){ return "Error:"+r; });
+    }
+  };
+})
+.factory('SessionSvc',function($http,Constants){
+  var url =Constants.BaseUrl;
+  return {
+    All: function() {
+      return $http.get(url+"Sesiones?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Get: function(id) {
+      return $http.get(url+"Sesiones/"+id+"?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      });
+    },
+    Create: function(data) {
+      return $http.post(url+"Sesiones?access_token="
+        +Constants.TemporalToken,data)
+      .then(function(r){return r.data;}
+        ,function(r){ return "Error:"+r.error; });
+    }
+  };
 });

@@ -30,6 +30,12 @@ angular.module('jaunter.map',[])
     var origin = newMarker.position;
     geocoder.geocode({'location': origin}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
+
+        TripFactory.simpleOriginLatLng = {
+          "lat": results[0].geometry.location.lat(),
+          "lng": results[0].geometry.location.lng()
+        };
+
         if (results[1]) {
           TripFactory.origin = results[1].formatted_address;
           TripFactory.originLatLng = origin;
@@ -115,7 +121,7 @@ angular.module('jaunter.map',[])
       // calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
       $scope.hidden = true;
     }
-  
+
     $scope.acceptRoute = function(){
       TripFactory.waypoints=wayPoints;
       TripFactory.acceptedRoute='Ruta Aceptada';
