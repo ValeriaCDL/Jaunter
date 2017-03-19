@@ -36,3 +36,10 @@
   text-align: center;
 
 }
+.centerText{
+  text-align: center;
+  display: block;
+}
+.uppercase{
+  text-transform: uppercase;
+}

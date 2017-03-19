@@ -1,11 +1,45 @@
-
+var cars=[];
 angular.module('jaunter.cars', ['jaunter.shared'])
 
-.controller('CarsCtrl', function($scope,CarSvc) {
+.controller('CarsCtrl', function($scope,CarSvc,$state,$ionicPopup) {
 
   CarSvc.All().then(function(c) {
+    // console.log(c);
     $scope.Cars = c;
+    for(var current=0;current<c.length;current++){
+      cars.push(c[current]);
+      console.log(c[current]);
+    }
   });
+  $scope.detailCar =function (event){
+    var id = event.target.id;
+    console.log(id);
+    // $scope.data = {};
+
+ // An elaborate, custom popup
+ // var myPopup = $ionicPopup.show({
+ //   template:
+ //    '<p><strong>Marca: </strong></p>'+car[id],
+ //   title: 'Enter Wi-Fi Password',
+ //   subTitle: 'Please use normal things',
+ //   scope: $scope,
+ //   buttons: [
+ //     { text: 'Cancel' },
+ //     {
+ //       text: '<b>Save</b>',
+ //       type: 'button-positive',
+ //       onTap: function(e) {
+ //         if (!$scope.data.wifi) {
+ //           //don't allow the user to close unless he enters wifi password
+ //           e.preventDefault();
+ //         } else {
+ //           return $scope.data.wifi;
+ //         }
+ //       }
+ //     }
+ //   ]
+ // });
+  }
 })
 .controller('CarCtrl', function($scope,$stateParams,CarSvc) {
   //$scope.car = angular.fromJson($stateParams.car); //funciona..pero noseqpedo con la vista

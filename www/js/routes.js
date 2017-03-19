@@ -18,7 +18,14 @@ angular.module('jaunter.routes', [])
       }
     }
   })
-
+  .state('jaunter.Profile', {
+      url: '/Profile',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/profile.html'
+        }
+      }
+    })
   .state('jaunter.Trips', {
       url: '/Trips',
       views: {
