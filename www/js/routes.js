@@ -10,7 +10,7 @@ angular.module('jaunter.routes', [])
     controller: 'AppCtrl'
   })
 
-  .state('jaunter.Home', {
+  .state('jaunter.home', {
     url: '/Home',
     views: {
       'menuContent': {
@@ -18,7 +18,7 @@ angular.module('jaunter.routes', [])
       }
     }
   })
-  .state('jaunter.Profile', {
+  .state('jaunter.profile', {
       url: '/Profile',
       views: {
         'menuContent': {
@@ -26,11 +26,12 @@ angular.module('jaunter.routes', [])
         }
       }
     })
-  .state('jaunter.Trips', {
+  .state('jaunter.trips', {
       url: '/Trips',
       views: {
         'menuContent': {
-          templateUrl: 'templates/trips.html'
+          templateUrl: 'templates/trips.html',
+          controller:'TripsCtrl'
         }
       }
     })
@@ -94,7 +95,7 @@ angular.module('jaunter.routes', [])
       views: {
         'menuContent': {
           templateUrl: 'templates/addcar.html',
-          controller: 'CarFormCtrl'
+          controller: 'CarCtrl'
         }
       }
     })

@@ -5,6 +5,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   $scope.trip = TripFactory;
   $scope.hidden=true;
   $scope.slots = {epochTime: 12600, format: 12, step: 5};
+  $scope.trip.days ={lun:false,mar:false,mie:false,jue:false,vie:false,sab:false,dom:false};
   $scope.departureTimeCallback = function (val) {
     if (typeof (val) === 'undefined') {
       console.log('Time not selected');
@@ -54,10 +55,10 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 
       }
       ClickValidationFactory.departureTime=true;
-      if(ClickValidationFactory.departureTime==true
-        && ClickValidationFactory.arrivalTime==true
-        && ClickValidationFactory.origin==true
-        && ClickValidationFactory.destination==true
+      if(ClickValidationFactory.departureTime
+        && ClickValidationFactory.arrivalTime
+        && ClickValidationFactory.origin
+        && ClickValidationFactory.destination
         && ClickValidationFactory.acceptedRoute)
         {
           $scope.hidden=false;
@@ -117,10 +118,10 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       }
       ClickValidationFactory.arrivalTime=true;
 
-      if(ClickValidationFactory.departureTime==true
-        && ClickValidationFactory.arrivalTime==true
-        && ClickValidationFactory.origin==true
-        && ClickValidationFactory.destination==true
+      if(ClickValidationFactory.departureTime
+        && ClickValidationFactory.arrivalTime
+        && ClickValidationFactory.origin
+        && ClickValidationFactory.destination
         && ClickValidationFactory.acceptedRoute)
         {
           $scope.hidden=false;
@@ -129,14 +130,14 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         }
     }
   };
-  $scope.checkObj = function (){
-    console.log(TripFactory);
+  $scope.add = function (){
     TripSvc.Create();
-  }
+    $state.go('jaunter.trips', {}, {reload: true});
+  };
   $scope.validClick = function(event){
     switch (event.target.id) {
       case 'destinationBtn':
-      if(ClickValidationFactory.origin==true){
+      if(ClickValidationFactory.origin){
         $state.go("jaunter.destinationTrip");
       }else{
         var alertPopup = $ionicPopup.alert({
@@ -146,7 +147,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       }
       break;
       case 'routeBtn':
-      if(ClickValidationFactory.destination==true){
+      if(ClickValidationFactory.destination){
         $state.go("jaunter.googleRouteMap");
       }else{
         var alertPopup = $ionicPopup.alert({
@@ -155,22 +156,25 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         });
       }
       break;
-
       default:
-
     }
-
-
-  }
+  };
+})
+.controller('TripsCtrl',function($scope,TripSvc){
+  TripSvc.All().then(function(c) {
+    $scope.trips = c;
+  });
 })
 .factory('TripFactory', function(){
   var trip = {
+    days:{},
+    userType:true, //true=conductor, false=pasajero 
     origin:'',
     originLatLng:'',
     simpleOriginLatLng: {},
     destination:'',
     destinationLatLng:'',
-    waypoints:'',
+    waypoints:null,
     acceptedRoute:'',
     departureTime:'',
     departureTimeText:'',
@@ -216,16 +220,22 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         hq = response;
         //4.ligo sede y localizacion con mi sesion
         session = {
+        "ruta":{ "waypoints":TripFactory.waypoints},
         "id_localizacion": localization["id"],
         "id_sede": hq["id"]
         };
         SessionSvc.Create(session).then(function(response) {
           session = response;
           //5.ligo mi sesion con mi config_sesion (viaje)
+          var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();
+          var t2 = TripFactory.destination.split(","); t2.pop();t2.pop();
+
           trip = {
+          "nombre":t1+" a "+t2,
+          "dias":TripFactory.days,
           "hora_salida": TripFactory.departureTimeText,
           "hora_llegada": TripFactory.arrivalTimeText,
-          "tipo_usuario": true,  //que es conductor
+          "tipo_usuario": TripFactory.userType,
           "id_usuario": "5714434c429d899231431566", //no se quien es pero es requerido
           "id_institucion": hq["id_institucion"],
           "id_sesion": session["id"]

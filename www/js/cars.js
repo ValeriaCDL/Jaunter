@@ -47,7 +47,7 @@ angular.module('jaunter.cars', ['jaunter.shared'])
 
 })
 
-.controller('CarFormCtrl', function($scope, $http,Constants,CarValidationFactory){
+.controller('CarCtrl', function($scope, $http,Constants,CarValidationFactory){
   // POR ahora casi todos los campos son obligatorios...
   $scope.hidden=true;
   $scope.checkInput = function(event){

@@ -3,6 +3,7 @@
 
     <form ng-submit="notyet()" >
       <div class="list">
+          <ion-toggle ng-model="trip.userType" toggle-class="toggle-balanced">Soy Conductor</ion-toggle>
         <ion-item>
           <a class="button button-dark button-block" href="#/jaunter/originTrip" id="originBtn" >Dirección origen</a>
           <label class="labelTrip">{{trip.origin}}</label>
@@ -27,8 +28,28 @@
           </ionic-timepicker>
           <label class="labelTrip">{{trip.arrivalTimeText}} </label>
         </ion-item>
+        <ion-item>
+            <div class = "row">
+               <div class = "col">Lun</div>
+               <div class = "col">Mar</div>
+               <div class = "col">Mie</div>
+               <div class = "col">Jue</div>
+               <div class = "col">Vie</div>
+               <div class = "col">Sab</div>
+               <div class = "col">Dom</div>
+            </div>
+            <div class = "row">
+              <div class = "col"><input type="checkbox" ng-model="trip.days.lun"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.mar"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.mie"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.jue"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.vie"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.sab"></div>
+              <div class = "col"><input type="checkbox" ng-model="trip.days.dom"></div>
+            </div>
+        </ion-item>
       </div>
-      <button class="button button-balanced submitBtn" type="submit" ng-click="checkObj()" ng-hide="hidden">Agregar</button>
+      <button class="button button-balanced submitBtn" type="submit" ng-click="add()" ng-hide="hidden">Agregar</button>
 
     </form>
   </ion-content>
