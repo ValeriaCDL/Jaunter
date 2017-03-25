@@ -14,27 +14,30 @@
 
   <ion-side-menu side="left">
     <ion-header-bar class="bar-stable">
-      <h1 class="title">Left</h1>
+      <h1 class="title">John Wick</h1>
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-click="Profile()">
-          Perfil
+        <ion-item menu-close href="#/jaunter/Profile">
+          Mi Perfil
         </ion-item>
         <ion-item menu-close href="#/jaunter/Trips">
-          Viajes
+         Mis Viajes
         </ion-item>
         <ion-item menu-close href="#/jaunter/Cars">
-          Carros
+          Mis Carros
         </ion-item>
-        <ion-item menu-close href="#/jaunter/Profile">
+        <ion-item menu-close href="#/jaunter/People">
           Personas
         </ion-item>
         <ion-item menu-close href="#/jaunter/Setting">
           Configuración
         </ion-item>
-
       </ion-list>
+
     </ion-content>
+
+    <a  href="#/" class="bar bar-footer bar-assertive textCenter">Cerrar Sesion</a>
+
   </ion-side-menu>
 </ion-side-menus>

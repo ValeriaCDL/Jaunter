@@ -1,0 +1,11 @@
+<ion-view>
+  <ion-pane>
+    <ion-content id="customRouteMap"></ion-content>
+    <div  class="bar bar-footer">
+      <button class="button button-energized icon-left ion-trash-b " type="button" ng-hide="hidden" ng-click="cleanMap()" id="cleanMap">Limpiar</button>
+      <button class="button button-positive" type="button" ng-hide="hidden" ng-click="generateRoute()" id="generateRoute">Generar Ruta</button>
+      <button class="button button-positive icon-left ion-edit" type="button"ng-hide="!hidden" ng-click="editRoute()" id="editRoute">Editar Ruta</button>
+      <button class="button button-positive icon-left ion-checkmark" type="button" ng-hide="!hidden" ng-click="acceptRoute()" id="acceptRoute">Aceptar Ruta</button>
+    </div>
+  </ion-pane>
+</ion-view>

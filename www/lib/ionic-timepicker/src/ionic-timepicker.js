@@ -99,18 +99,18 @@ angular.module('ionic-timepicker', ['ionic', 'ionic-timepicker.templates'])
 
             $ionicPopup.show({
               templateUrl: 'time-picker-12-hour.html',
-              title: '<strong>12-Hour Format</strong>',
+              title: '<strong>Hora</strong>',
               subTitle: '',
               scope: scope,
               buttons: [
                 {
-                  text: 'Close',
+                  text: 'Cerrar',
                   onTap: function (e) {
                     scope.callback(undefined);
                   }
                 },
                 {
-                  text: 'Set',
+                  text: 'Aceptar',
                   type: 'button-positive',
                   onTap: function (e) {
                     scope.loadingContent = true;

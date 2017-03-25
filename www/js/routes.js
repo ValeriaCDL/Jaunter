@@ -3,27 +3,35 @@ angular.module('jaunter.routes', [])
 .config(function($stateProvider, $urlRouterProvider) {
   $stateProvider
 
-    .state('jaunter', {
+  .state('jaunter', {
     url: '/jaunter',
     abstract: true,
     templateUrl: 'templates/menu.html',
     controller: 'AppCtrl'
   })
 
-  .state('jaunter.search', {
-    url: '/search',
+  .state('jaunter.home', {
+    url: '/Home',
     views: {
       'menuContent': {
-        templateUrl: 'templates/search.html'
+        templateUrl: 'index.html'
       }
     }
   })
-
-  .state('jaunter.Trips', {
+  .state('jaunter.profile', {
+      url: '/Profile',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/profile.html'
+        }
+      }
+    })
+  .state('jaunter.trips', {
       url: '/Trips',
       views: {
         'menuContent': {
-          templateUrl: 'templates/trips.html'
+          templateUrl: 'templates/trips.html',
+          controller:'TripsCtrl'
         }
       }
     })
@@ -36,7 +44,43 @@ angular.module('jaunter.routes', [])
           }
         }
       })
-    .state('jaunter.Cars', {
+      .state('jaunter.originTrip', {
+          url: '/originTrip',
+          views: {
+            'menuContent': {
+              templateUrl: 'templates/originMap.html',
+              controller: 'OriginMapCtrl'
+            }
+          }
+        })
+        .state('jaunter.destinationTrip', {
+            url: '/destinationTrip',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/destinationMap.html',
+                controller: 'DestinationMapCtrl'
+              }
+            }
+          })
+        .state('jaunter.googleRouteMap', {
+            url: '/googleRouteMap',
+            views: {
+              'menuContent': {
+                templateUrl: 'templates/googleRouteMap.html',
+                controller: 'GoogleMapCtrl'
+              }
+            }
+          })
+    .state('jaunter.customRouteMap', {
+        url: '/customRouteMap',
+        views: {
+          'menuContent': {
+      templateUrl: 'templates/customRouteMap.html',
+          controller: 'CustomMapCtrl'
+          }
+        }
+    })
+    .state('jaunter.cars', {
       url: '/Cars',
       views: {
         'menuContent': {
@@ -51,12 +95,12 @@ angular.module('jaunter.routes', [])
       views: {
         'menuContent': {
           templateUrl: 'templates/addcar.html',
-          //controller: 'CarsCtrl'
+          controller: 'CarCtrl'
         }
       }
     })
 
-  .state('jaunter.single', {
+  .state('jaunter.car', {
     url: '/Cars/:carId',
     views: {
       'menuContent': {
@@ -66,5 +110,5 @@ angular.module('jaunter.routes', [])
     }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/jaunter/Cars');
+  $urlRouterProvider.otherwise('/jaunter/Trips');
 });

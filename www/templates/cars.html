@@ -1,17 +1,37 @@
 <ion-view view-title="Carros">
   <ion-content>
-    <ion-list>
-      <ion-item ng-repeat="car in Cars" href="#/jaunter/Cars/{{car.id}}">
-        {{car.marca}} {{car.modelo}}
+
+    <!-- <div class="list list-inset">
+      <ion-item ng-repeat="car in Cars" class="itemCar " href="#/jaunter/Cars/{{car.id}}">
+        <p>
+          <strong class="uppercase centerText">{{car.marca}} {{car.modelo}}</strong>
+        </p>
       </ion-item>
-    </ion-list>
+    </div> -->
+  <div class="card" ng-repeat="car in Cars" >
+  <div id="{{car.id}}"ng-click="detailCar($event)" class="item item-text-wrap">
+    <div class="row">
+      <p class="col-50">
+        <strong>Marca: </strong> {{car.marca}}
+      </p>
+      <p class="col-50">
+        <strong>Modelo: </strong>{{car.modelo}}
+      </p>
+    </div>
+    <div class="row">
+      <p class="col-50">
+        <strong>Año: </strong> {{car.anio}}
+      </p>
+      <p class="col-50">
+        <strong>Modelo: </strong>{{car.color}}
+      </p>
+    </div>
 
-    <!-- <a href="#/app/addCar" class="button button-positive fab-button"></a> -->
-
-    <a href="#/jaunter/addCar" style="color: green;" class="button button-icon icon ion-plus-circled"></a>
-
-
-
-
+  </div>
+</div>
   </ion-content>
+  <div class="bar bar-footer">
+  <a class="button button-clear button-positive  footerBtn" href="#/jaunter/addCar">+ Agregar</a>
+</div>
+
 </ion-view>

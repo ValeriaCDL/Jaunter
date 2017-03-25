@@ -1,42 +1,40 @@
 <ion-view view-title="Agregar Carro">
   <ion-content>
-
-  <form ng-submit="notyet()">
-    <div class="list">
+  <form ng-submit="post(car)">
+    <div class="list list-inset">
       <label class="item item-input item-floating-label">
         <span class="input-label">Marca</span>
-        <input type="text" placeholder="Marca" ng-model="not.yet">
+        <input type="text" placeholder="Marca" ng-blur="checkInput($event)" id="brandInput" ng-model="car.marca"/>
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Modelo</span>
-        <input type="text" placeholder="Modelo">
+        <input type="text" placeholder="Modelo" ng-blur="checkInput($event)" id="modelInput" ng-model="car.modelo">
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Año</span>
-        <input type="number" placeholder="Año" min="1900" max="2017">
+        <input type="number" placeholder="Año" min="1900" max="2017" ng-blur="checkInput($event)" id="yearInput" ng-model="car.anio">
         <!-- y si cambia el año?? -->
       </label>
-      <label class="item item-input item-select">
+      <label class="item item-input item-select" >
         <div class="input-label">Color</div>
-        <select>
-          <!-- despus ponemos el ngmodel -->
-          <option value="blanco">blanco</option>
-          <option value="negro">negro</option>
-          <option value="azul">azul</option>
+        <select ng-model="car.color" ng-blur="checkInput($event)" id="colorInput">
+          <option value="blanco">Blanco</option>
+          <option value="negro">Negro</option>
+          <option value="azul">Azul</option>
+          <option value="gris">Gris</option>
+          
         </select>
       </label>
-      <label class="item item-input item-floating-label">
+      <label class="item item-input item-floating-label" >
         <span class="input-label">No. de asientos</span>
-        <input type="number" placeholder="No. de asientos" min="2" max="10">
+        <input type="number" placeholder="No. de asientos" min="2" max="10" maxlength="2" ng-blur="checkInput($event)" id="seatInput">
       </label>
       <label class="item item-input item-floating-label">
         <span class="input-label">Descripción</span>
-        <input type="text" placeholder="Descripción" maxlength="200">
+        <input type="text" placeholder="Descripción" maxlength="200" ng-model="car.comentario" ng-blur="checkInput($event)" id="descriptionInput">
       </label>
-
-
     </div>
-    <button class="button button-positive" type="submit">Agregar</button>
+    <button class="button button-positive submitBtn" type="submit" ng-hide="hidden">Agregar</button>
   </form>
   </ion-content>
 </ion-view>
