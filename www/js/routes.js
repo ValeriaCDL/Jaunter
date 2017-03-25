@@ -99,7 +99,15 @@ angular.module('jaunter.routes', [])
         }
       }
     })
-
+    .state('jaunter.searchPeople', {
+      url: '/searchPeople',
+      views: {
+        'menuContent': {
+          templateUrl: 'templates/searchPeopleMap.html',
+          controller: 'searchPeopleCtrl'
+        }
+      }
+    })
   .state('jaunter.car', {
     url: '/Cars/:carId',
     views: {
@@ -108,7 +116,17 @@ angular.module('jaunter.routes', [])
         controller: 'CarCtrl'
       }
     }
-  });
+    // .state('jaunter.car', {
+    //   url: '/Cars/:carId',
+    //   views: {
+    //     'menuContent': {
+    //       templateUrl: 'templates/car.html',
+    //       controller: 'CarCtrl'
+    //     }
+    //   }
+    // }
+
+  })
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/jaunter/Trips');
 });

@@ -1,10 +1,49 @@
 <ion-view cache-view="false" view-title="Viajes">
   <ion-content>
-  <div class="list list-inset">
+  <!-- <div class="list list-inset">
       <ion-item ng-repeat="trip in trips" href="#/jaunter/Trips/{{trip.id}}">
         {{trip.nombre}}
       </ion-item>
+    </div> -->
+    <div class="card" ng-repeat="trip in trips" >
+    <div id='{{trip.id}}'ng-click="detailTrip($event)" class="item item-text-wrap">
+      <div class="row">
+        <p class="col-75">
+          {{trip.nombre}}
+        </p>
+      </div>
+      <hr />
+      <div class="row">
+        <p class="col-15 days" ><strong >{{trip.dias.dom}}</strong></p>
+          <p class="col-15 days"><strong >{{trip.dias.lun}}</strong></p>
+            <p class="col-15 days"><strong >{{trip.dias.mar}}</strong></p>
+              <p class="col-15 days"><strong >{{trip.dias.mie}}</strong></p>
+                <p class="col-15 days"><strong>{{trip.dias.jue}}</strong></p>
+                  <p class="col-15 days"><strong>{{trip.dias.vie}}</strong></p>
+                    <p class="col-15 days"><strong>{{trip.dias.sab}}</strong></p>
+
+
+
+      </div>
+      <hr />
+      <div class="row">
+        <p class="col-50">
+          <strong>Hora Salida: </strong>{{trip.hora_salida}}
+        </p>
+        <p class="col-50">
+          <strong>Hora Llegada: </strong>{{trip.hora_llegada}}
+        </p>
+      </div>
+      <hr />
+      <div class="row">
+        <p class="col-75" style="text-align:center;">
+          <strong>{{trip.tipo_usuario}}</strong>
+        </p>
+
+      </div>
+
     </div>
+  </div>
   </ion-content>
   <div class="bar bar-footer">
   <a class="button button-clear button-positive  footerBtn" href="#/jaunter/addTrip">+ Agregar</a>

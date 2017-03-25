@@ -162,13 +162,15 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 })
 .controller('TripsCtrl',function($scope,TripSvc){
   TripSvc.All().then(function(c) {
+    console.log(c);
+    
     $scope.trips = c;
   });
 })
 .factory('TripFactory', function(){
   var trip = {
     days:{},
-    userType:true, //true=conductor, false=pasajero 
+    userType:true, //true=conductor, false=pasajero
     origin:'',
     originLatLng:'',
     simpleOriginLatLng: {},
@@ -185,7 +187,6 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   return trip;
 })
 .factory('ClickValidationFactory', function(){
-
   var valid = {
     origin:false,
     destination:false,
