@@ -201,6 +201,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   var trip, localization, hq, session; //hq es la sede
 
   var create = function(){
+	//Evitar viajes por cambios en BD
+	return;
     //config_sesion (viaje) tiene una sesion,
     //y esa sesión tiene una localización y una sede, entonces:
     //1.TripFactory ya debe estar lleno
