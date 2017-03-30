@@ -162,8 +162,6 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 })
 .controller('TripsCtrl',function($scope,TripSvc){
   TripSvc.All().then(function(c) {
-    console.log(c);
-    
     $scope.trips = c;
   });
 })
@@ -176,7 +174,17 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     simpleOriginLatLng: {},
     destination:'',
     destinationLatLng:'',
-    waypoints:null,
+    route:{
+      startpoint:{
+        "lat": "",
+        "lng": ""
+      },
+      endpoint:{
+        "lat": "",
+        "lng": ""
+      },
+      waypoints:null
+    },
     acceptedRoute:'',
     departureTime:'',
     departureTimeText:'',
@@ -223,7 +231,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         hq = response;
         //4.ligo sede y localizacion con mi sesion
         session = {
-        "ruta":{ "waypoints":TripFactory.waypoints},
+        "ruta":{ "waypoints":TripFactory.route.waypoints},
         "id_localizacion": localization["id"],
         "id_sede": hq["id"]
         };

@@ -30,7 +30,6 @@ angular.module('jaunter.map',[])
     var origin = newMarker.position;
     geocoder.geocode({'location': origin}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
-
         TripFactory.simpleOriginLatLng = {
           "lat": results[0].geometry.location.lat(),
           "lng": results[0].geometry.location.lng()
@@ -126,7 +125,7 @@ angular.module('jaunter.map',[])
               //don't allow the user to close unless he enters wifi password
               es.preventDefault();
             } else {
-            
+
               var range = parseInt($scope.data.rangeInpt);
               placeMarkerAndRadius(e.latLng, map,range);
 
@@ -161,15 +160,15 @@ angular.module('jaunter.map',[])
   });
 
   $scope.generateRoute = function(){
-    TripFactory.waypoints = wayPoints;
-    console.log(TripFactory.waypoints);
+    TripFactory.route.waypoints = wayPoints;
+    console.log(TripFactory.route.waypoints);
 
     // calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
     $scope.hidden = true;
   }
 
   $scope.acceptRoute = function(){
-    TripFactory.waypoints=wayPoints;
+    TripFactory.route.waypoints=wayPoints;
     TripFactory.acceptedRoute='Ruta Aceptada';
     ClickValidationFactory.acceptedRoute=true;
     $ionicHistory.goBack(-2);
