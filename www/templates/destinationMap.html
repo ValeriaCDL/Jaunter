@@ -1,14 +1,29 @@
-<ion-view>
+<ion-view view-title="Destino" >
+
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear" ng-hide="!hidden" ng-click="acceptMap()"> Continuar  </button>
+      <button type="button" class="button button-clear" ng-hide="hidden" ng-click="searchAddressMap()"> Buscar  </button>
+  </ion-nav-buttons>
+
   <ion-pane>
-    <ion-content id="destinationMap"></ion-content>
+
+    <ion-content id="destinationMap" class="marginMap"></ion-content></ion-content>
+
     <div  class="bar bar-footer">
-        <label class="item item-input col-75" ng-hide="hidden">
-          <i class="icon ion-search placeholder-icon"></i>
-          <input type="search" placeholder="Buscar"  ng-model="trip.destination" id="inputAddressDestination">
-        </label>
-        <button class="button button-positive col-25" type="button" ng-hide="hidden" ng-click="searchAddressMap()" style="margin-left:5px;">Buscar</button>
-        <button class="button button-energized icon-left ion-edit" type="button" ng-hide="!hidden" ng-click="editAddressMap() ">Editar</button>
-        <button class="button button-positive icon-left ion-checkmark" type="button"  ng-hide="!hidden" ng-click="acceptMap()">Aceptar</button>
-    </div>
-  </ion-pane>
+    <select class="col"  id="schoolSelectDestination" ng-hide="schoolHide">
+      <option value="" selected >Sede</option>
+      <option value="UABC Valle Dorado Ensenada">UABC Valle Dorado</option>
+      <option "UABC Ensenada">UABC Sauzal</option>
+    </select>
+    <select class="col"  id="zoneSelectDestination" ng-hide="zoneHide">
+      <option selected value="">Zona</option>
+      <option value="Moderna Ensenada">Moderna</option>
+      <option value="Valle Dorado Ensenada">Valle Dorado </option>
+      <option value="Valle Verde Ensenada">Valle Verde </option>
+    </select>
+      <button class="button button-energized icon-left ion-edit col" ng-hide="!hidden" type="button" ng-click="editAddressMap() ">Editar</button>
+  </div>
+
+</ion-pane>
+
 </ion-view>

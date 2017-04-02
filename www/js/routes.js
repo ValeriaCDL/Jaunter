@@ -19,95 +19,104 @@ angular.module('jaunter.routes', [])
     }
   })
   .state('jaunter.profile', {
-      url: '/Profile',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/profile.html'
-        }
+    url: '/Profile',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/profile.html'
       }
-    })
+    }
+  })
   .state('jaunter.trips', {
-      url: '/Trips',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/trips.html',
-          controller:'TripsCtrl'
-        }
+    url: '/Trips',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/trips.html',
+        controller:'TripsCtrl'
       }
-    })
-    .state('jaunter.addTrip', {
-        url: '/addTrip',
-        views: {
-          'menuContent': {
-            templateUrl: 'templates/addtrip.html',
-            controller: 'TripCtrl'
-          }
-        }
-      })
-      .state('jaunter.originTrip', {
-          url: '/originTrip',
-          views: {
-            'menuContent': {
-              templateUrl: 'templates/originMap.html',
-              controller: 'OriginMapCtrl'
-            }
-          }
-        })
-        .state('jaunter.destinationTrip', {
-            url: '/destinationTrip',
-            views: {
-              'menuContent': {
-                templateUrl: 'templates/destinationMap.html',
-                controller: 'DestinationMapCtrl'
-              }
-            }
-          })
-        .state('jaunter.googleRouteMap', {
-            url: '/googleRouteMap',
-            views: {
-              'menuContent': {
-                templateUrl: 'templates/googleRouteMap.html',
-                controller: 'GoogleMapCtrl'
-              }
-            }
-          })
-    .state('jaunter.customRouteMap', {
-        url: '/customRouteMap',
-        views: {
-          'menuContent': {
-      templateUrl: 'templates/customRouteMap.html',
-          controller: 'CustomMapCtrl'
-          }
-        }
-    })
-    .state('jaunter.cars', {
-      url: '/Cars',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/Cars.html',
-          controller: 'CarsCtrl'
-        }
+    }
+  })
+  .state('jaunter.addTrip', {
+    url: '/addTrip',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/addtrip.html',
+        controller: 'TripCtrl'
       }
-    })
+    }
+  })
+  .state('jaunter.originTrip', {
+    url: '/originTrip',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/originMap.html',
+        controller: 'OriginMapCtrl'
+      }
+    }
+  })
+  .state('jaunter.destinationTrip', {
+    url: '/destinationTrip',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/destinationMap.html',
+        controller: 'DestinationMapCtrl'
+      }
+    }
+  })
+  .state('jaunter.googleRouteMap', {
+    url: '/googleRouteMap',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/googleRouteMap.html',
+        controller: 'GoogleMapCtrl'
+      }
+    }
+  })
+  .state('jaunter.scheduleTrip', {
+    url: '/scheduleTrip',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/scheduleTrip.html',
+        controller: 'TripCtrl'
+      }
+    }
+  })
+  .state('jaunter.customRouteMap', {
+    url: '/customRouteMap',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/customRouteMap.html',
+        controller: 'CustomMapCtrl'
+      }
+    }
+  })
+  .state('jaunter.cars', {
+    url: '/Cars',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/Cars.html',
+        controller: 'CarsCtrl'
+      }
+    }
+  })
 
-    .state('jaunter.addCar', {
-      url: '/addCar',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/addcar.html',
-          controller: 'CarCtrl'
-        }
+  .state('jaunter.addCar', {
+    url: '/addCar',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/addcar.html',
+        controller: 'CarCtrl'
       }
-    })
-    .state('jaunter.searchPeople', {
-      url: '/searchPeople',
-      views: {
-        'menuContent': {
-          templateUrl: 'templates/searchPeopleMap.html',
-          controller: 'searchPeopleCtrl'
-        }
+    }
+  })
+  .state('jaunter.searchPeople', {
+    url: '/searchPeople',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/searchPeopleMap.html',
+        controller: 'searchPeopleCtrl'
       }
-    })
+    }
+  })
   .state('jaunter.car', {
     url: '/Cars/:carId',
     views: {

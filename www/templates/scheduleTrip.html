@@ -1,0 +1,41 @@
+
+<ion-view view-title="Horario">
+  
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear" ng-hide="hidden" ng-click="add()"> Guardar  </button>
+  </ion-nav-buttons>
+  <ion-pane>
+    <ion-content>
+      <div class="list list-inset">
+
+        <ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="departureTimeCallback">
+          <button class="button button-block button-dark"  id="departureBtn"> Hora de Salida </button>
+        </ionic-timepicker>
+        <label class="labelTrip">{{trip.departureTimeText}}</label>
+
+        <ionic-timepicker etime="slots.epochTime" format="slots.format" step="slots.step" callback="arrivalTimeCallback">
+          <button class="button button-block button-dark" id="arrivalBtn">Hora de Llegada </button>
+        </ionic-timepicker>
+        <label class="labelTrip">{{trip.arrivalTimeText}} </label>
+        <div class = "row">
+          <div class = "col">Lun</div>
+          <div class = "col">Mar</div>
+          <div class = "col">Mie</div>
+          <div class = "col">Jue</div>
+          <div class = "col">Vie</div>
+          <div class = "col">Sab</div>
+          <div class = "col">Dom</div>
+        </div>
+        <div class = "row">
+          <div class = "col"><input type="checkbox" ng-model="trip.days.lun"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.mar"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.mie"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.jue"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.vie"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.sab"></div>
+          <div class = "col"><input type="checkbox" ng-model="trip.days.dom"></div>
+        </div>
+      </div>
+    </ion-content>
+  </ion-pane>
+</ion-view>

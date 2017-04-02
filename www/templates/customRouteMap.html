@@ -1,11 +1,13 @@
-<ion-view>
+<ion-view view-title="Personalizar" >
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear" ng-hide="hidden" ng-click="generateRoute()"> Generar  </button>
+    <button type="button" class="button button-clear"  ng-hide="!hidden" ng-click="acceptRoute()"> Continuar  </button>
+  </ion-nav-buttons>
   <ion-pane>
-    <ion-content id="customRouteMap"></ion-content>
+    <ion-content id="customRouteMap" class="marginMap"></ion-content>
     <div  class="bar bar-footer">
-      <button class="button button-energized icon-left ion-trash-b " type="button" ng-hide="hidden" ng-click="cleanMap()" id="cleanMap">Limpiar</button>
-      <button class="button button-positive" type="button" ng-hide="hidden" ng-click="generateRoute()" id="generateRoute">Generar Ruta</button>
-      <button class="button button-positive icon-left ion-edit" type="button"ng-hide="!hidden" ng-click="editRoute()" id="editRoute">Editar Ruta</button>
-      <button class="button button-positive icon-left ion-checkmark" type="button" ng-hide="!hidden" ng-click="acceptRoute()" id="acceptRoute">Aceptar Ruta</button>
+      <button class="button button-assertive icon-left ion-trash-b col " type="button"  ng-click="clearMap()" id="cleanMap">Limpiar</button>
+
     </div>
   </ion-pane>
 </ion-view>

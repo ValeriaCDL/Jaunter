@@ -3,8 +3,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 
 .controller('TripCtrl', function($scope,TripFactory,ClickValidationFactory,$state,$ionicPopup,TripSvc){
   $scope.trip = TripFactory;
-  $scope.hidden=true;
-  $scope.slots = {epochTime: 12600, format: 12, step: 5};
+  $scope.hidden=false;
+  $scope.slots = {epochTime: 43200, format: 12, step: 5};
   $scope.trip.days ={lun:false,mar:false,mie:false,jue:false,vie:false,sab:false,dom:false};
   $scope.departureTimeCallback = function (val) {
     if (typeof (val) === 'undefined') {
@@ -159,21 +159,54 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       default:
     }
   };
+
 })
-.controller('TripsCtrl',function($scope,TripSvc){
+.controller('TripsCtrl',function($scope,TripSvc,$state,$ionicPopup,TripFactory){
   TripSvc.All().then(function(c) {
     $scope.trips = c;
   });
+  $scope.userTypePopup = function(){
+    $scope.data = {};
+    var typePopup = $ionicPopup.show({
+      template: '<ion-toggle ng-model="data.driver" toggle-class="toggle-balanced">Conductor</ion-toggle><ion-toggle ng-model="data.passenger" toggle-class="toggle-balanced">Pasajero</ion-toggle>',
+      title: 'Tipo de usuario',
+      scope: $scope,
+      buttons: [
+        { text: 'Cancelar' },
+        {
+          text: '<b>Aceptar</b>',
+          type: 'button-positive',
+          onTap: function(es) {
+            if (!$scope.data.driver && !$scope.data.passenger) {
+              es.preventDefault();
+            } else {
+              if($scope.data.driver == true && $scope.data.passenger==undefined){
+                TripFactory.userType = true;
+                $state.go("jaunter.originTrip");
+              console.log("Driver "+$scope.data.driver);
+            }else if ($scope.data.driver == undefined && $scope.data.passenger== true) {
+                TripFactory.userType = false;
+                $state.go("jaunter.originTrip");
+                console.log("passenger"+$scope.data.passenger);
+            } else if ($scope.data.driver == true && $scope.data.passenger== true) {
+              alert("Solo debes elegir una opción");
+            }
+
+            }
+          }
+        }
+      ]
+    });
+  }
 })
 .factory('TripFactory', function(){
   var trip = {
     days:{},
     userType:true, //true=conductor, false=pasajero
     origin:'',
-    originLatLng:'',
-    simpleOriginLatLng: {},
+    originLatLng: {},
     destination:'',
-    destinationLatLng:'',
+    destinationLatLng:{},
     route:{
       startpoint:{
         "lat": "",
@@ -190,7 +223,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     departureTimeText:'',
     arrivalTime:'',
     arrivalTimeText:'',
-    isPopulated:false
+    isPopulated:false,
+    originType:true //true el origen es diferente de sede
   };
   return trip;
 })
@@ -220,7 +254,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     //POR HACER: verificar que el objeto no esta ya creado
     localization = {
     "nombre": TripFactory.origin,
-    "coordenadas": TripFactory.simpleOriginLatLng
+    "coordenadas": TripFactory.originLatLng
     };
     LocalizationSvc.Create(localization).then(function(response) {
       localization = response;

@@ -1,11 +1,15 @@
-<ion-view cache-view="false" view-title="Viajes">
-  <ion-content>
-  <!-- <div class="list list-inset">
+<ion-view cache-view="false" view-title="Mis Viajes">
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear" ng-hide="hidden" ng-click="userTypePopup()">Crear</button>
+  </ion-nav-buttons>
+  <ion-pane>
+    <ion-content>
+      <!-- <div class="list list-inset">
       <ion-item ng-repeat="trip in trips" href="#/jaunter/Trips/{{trip.id}}">
-        {{trip.nombre}}
-      </ion-item>
-    </div> -->
-    <div class="card" ng-repeat="trip in trips" >
+      {{trip.nombre}}
+    </ion-item>
+  </div> -->
+  <div class="card" ng-repeat="trip in trips" >
     <div id='{{trip.id}}'ng-click="detailTrip($event)" class="item item-text-wrap">
       <div class="row">
         <p class="col-75">
@@ -15,15 +19,12 @@
       <hr />
       <div class="row">
         <p class="col-15 days" ><strong >{{trip.dias.dom}}</strong></p>
-          <p class="col-15 days"><strong >{{trip.dias.lun}}</strong></p>
-            <p class="col-15 days"><strong >{{trip.dias.mar}}</strong></p>
-              <p class="col-15 days"><strong >{{trip.dias.mie}}</strong></p>
-                <p class="col-15 days"><strong>{{trip.dias.jue}}</strong></p>
-                  <p class="col-15 days"><strong>{{trip.dias.vie}}</strong></p>
-                    <p class="col-15 days"><strong>{{trip.dias.sab}}</strong></p>
-
-
-
+        <p class="col-15 days"><strong >{{trip.dias.lun}}</strong></p>
+        <p class="col-15 days"><strong >{{trip.dias.mar}}</strong></p>
+        <p class="col-15 days"><strong >{{trip.dias.mie}}</strong></p>
+        <p class="col-15 days"><strong>{{trip.dias.jue}}</strong></p>
+        <p class="col-15 days"><strong>{{trip.dias.vie}}</strong></p>
+        <p class="col-15 days"><strong>{{trip.dias.sab}}</strong></p>
       </div>
       <hr />
       <div class="row">
@@ -44,8 +45,8 @@
 
     </div>
   </div>
-  </ion-content>
-  <div class="bar bar-footer">
-  <a class="button button-clear button-positive  footerBtn" href="#/jaunter/addTrip">+ Agregar</a>
-</div>
+
+</ion-content>
+
+</ion-pane>
 </ion-view>

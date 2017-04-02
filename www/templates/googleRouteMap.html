@@ -1,9 +1,11 @@
-<ion-view>
+<ion-view view-title="Ruta" >
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear"  ng-click="acceptRoute()"> Continuar  </button>
+  </ion-nav-buttons>
   <ion-pane>
     <ion-content id="googleRouteMap"></ion-content>
     <div  class="bar bar-footer">
-    <a class="button button-energized icon-left ion-edit" type="button" id="customRoute" href="#/jaunter/customRouteMap">Personalizar Ruta</a>
-      <button class="button button-positive icon-left ion-checkmark" type="button" ng-click="acceptRoute()" id="acceptRoute">Aceptar</button>
+    <a class="button button-energized icon-left ion-edit col" type="button" id="customRoute" href="#/jaunter/customRouteMap">Personalizar Ruta</a>
   </div>
   </ion-pane>
 </ion-view>

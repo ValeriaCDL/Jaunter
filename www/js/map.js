@@ -5,20 +5,33 @@ var resultStr=[];
 var wayPoints=[];
 angular.module('jaunter.map',[])
 .directive("mapView", function() {
-  return {
-
-    //La idea es hacer una directiva del mapa
+  return {    //La idea es hacer una directiva del mapa
   };
 })
-.controller('OriginMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
+.controller('OriginMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13,mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("originMap"), mapOptions);
   var geocoder = new google.maps.Geocoder();
   $scope.map = map;
+  var address = document.getElementById('inputAddressOrigin');
+  var school = document.getElementById('schoolSelectOrigin');
+  address.addEventListener('change',function(){
+    school.value="";
+  });
+  school.addEventListener('change',function(){
+    address.value="";
+  });
   $scope.searchAddressMap = function(){
-    var address = document.getElementById('inputAddress').value;
-    geocodeAddress(geocoder, map,address);
+    if(school.value=="" && address.value==""){
+      alert("Selecciona almenos una opcion");
+    }else if (school.value!="" && address.value=="") {
+      console.log(school.value);
+      geocodeAddress(geocoder, map,school.value);
+    }else if (school.value=="" && address.value!="") {
+      console.log(address.value);
+      geocodeAddress(geocoder, map,address.value);
+    }
     $scope.hidden = true;
   }
   $scope.editAddressMap = function(){
@@ -30,51 +43,99 @@ angular.module('jaunter.map',[])
     var origin = newMarker.position;
     geocoder.geocode({'location': origin}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
-        TripFactory.simpleOriginLatLng = {
-          "lat": results[0].geometry.location.lat(),
-          "lng": results[0].geometry.location.lng()
-        };
-
         if (results[1]) {
+          if(address.value!=""){
+            TripFactory.originType = true;
+          }else if(school.value!=""){
+            TripFactory.originType = false;
+          }
           TripFactory.origin = results[1].formatted_address;
-          TripFactory.originLatLng = origin;
-          markers=[];
+          TripFactory.originLatLng = {
+            "lat": results[0].geometry.location.lat(),
+            "lng": results[0].geometry.location.lng()
+          };
+          if(TripFactory.originLatLng!=null){
+            $state.go("jaunter.destinationTrip");
+          }else{
+            alert("No se pudo guardar la direccion");
+          }
+
         } else {
           TripFactory.origin = 'No results found';
         }
       } else {
         TripFactory.origin = 'Geocoder failed due to: ' + status;
       }
+
     });
     ClickValidationFactory.origin=true;
-    $ionicHistory.goBack();
+    // $ionicHistory.goBack();
+
   }
 })
-.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
+.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state){
+  if(TripFactory.originType){
+    $scope.schoolHide=false;
+    $scope.zoneHide=true;
+  }else {
+    $scope.schoolHide=false;
+    $scope.zoneHide=false;
+  }
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13, mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("destinationMap"), mapOptions);
   var geocoder = new google.maps.Geocoder();
   $scope.map = map;
-  $scope.searchAddressMap = function(){
-    var address = document.getElementById('inputAddressDestination').value;
-    geocodeAddress(geocoder, map,address);
-    $scope.hidden = true;
-  }
-  $scope.editAddressMap = function(){
+  var zone = document.getElementById('zoneSelectDestination');
+  var school = document.getElementById('schoolSelectDestination');
+  zone.addEventListener('change',function(){
+    school.value="";
+  });
+  school.addEventListener('change',function(){
+    zone.value="";
+  });
+$scope.searchAddressMap = function(){
+  if(zone.value!="" && school.value==""){
     deleteMarkers();
-    $scope.hidden = false;
+  geocodeAddress(geocoder, map,zone.value);
+  }else if (school.value!="" && zone.value=="") {
+  deleteMarkers();
+    geocodeAddress(geocoder, map,school.value);
+}else if (school.value!="" && zone.value!="") {
+  zone.value="";
+  school.value="";
+  deleteMarkers();
+  alert("Solo selecciona una opcion");
+}
+  $scope.schoolHide=true;
+  $scope.zoneHide=true;
+  $scope.hidden = true;
+}
+$scope.editAddressMap = function(){
+  if(TripFactory.originType){
+    $scope.schoolHide=false;
+    $scope.zoneHide=true;
+  }else {
+    $scope.schoolHide=false;
+    $scope.zoneHide=false;
   }
-  $scope.acceptMap = function(){
+  deleteMarkers();
+  $scope.hidden = false;
+}
+$scope.acceptMap = function(){
     var newMarker = markers[0];
     var destination = newMarker.position;
     geocoder.geocode({'location': destination}, function(results, status) {
-
       if (status === google.maps.GeocoderStatus.OK) {
         if (results[1]) {
           TripFactory.destination = results[1].formatted_address;
-          TripFactory.destinationLatLng = destination;
-          markers=[];
+          TripFactory.destinationLatLng = {
+            "lat": results[0].geometry.location.lat(),
+            "lng": results[0].geometry.location.lng()
+          };
+          // if(TripFactory.destinationLatLng!="" && TripFactory.destinationLatLng!=""){
+          $state.go("jaunter.googleRouteMap");
+          //  }
         } else {
           TripFactory.destination = 'No results found';
         }
@@ -83,23 +144,25 @@ angular.module('jaunter.map',[])
       }
     });
     ClickValidationFactory.destination=true;
-    $ionicHistory.goBack();
+     // $ionicHistory.goBack();
   }
 })
-.controller('GoogleMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory){
+.controller('GoogleMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13, mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("googleRouteMap"), mapOptions);
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
-  calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,TripFactory.originLatLng,TripFactory.destinationLatLng);
+  var origin = new google.maps.LatLng(TripFactory.originLatLng.lat,TripFactory.originLatLng.lng);
+  var destination = new google.maps.LatLng(TripFactory.destinationLatLng.lat,TripFactory.destinationLatLng.lng);
+  calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,"Valle Dorado Ensenada","CETYS Ensenada");
   directionsDisplay.setMap(map);
   $scope.map = map;
-
   $scope.acceptRoute = function(){
     TripFactory.acceptedRoute = 'Ruta Aceptada';
     ClickValidationFactory.acceptedRoute=true;
-    $ionicHistory.goBack();
+    $state.go("jaunter.scheduleTrip");
+    // $ionicHistory.goBack();
   }
 })
 .controller('searchPeopleCtrl',function($scope,$ionicHistory,$http,$ionicPopup){
@@ -125,11 +188,8 @@ angular.module('jaunter.map',[])
               //don't allow the user to close unless he enters wifi password
               es.preventDefault();
             } else {
-
               var range = parseInt($scope.data.rangeInpt);
               placeMarkerAndRadius(e.latLng, map,range);
-
-
             }
           }
         }
@@ -138,40 +198,46 @@ angular.module('jaunter.map',[])
 
   });
   $scope.map = map;
-
   $scope.searchNearPeople = function(){
 
   };
 
 })
-.controller('CustomMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$ionicPopup){
+.controller('CustomMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$ionicPopup,$state){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13,mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("customRouteMap"), mapOptions);
-  var cetysMarker = new google.maps.Marker({position: TripFactory.destinationLatLng,map: map});
+  var destinationMarker = new google.maps.Marker({position: TripFactory.destinationLatLng,map: map});
   var originMarker = new google.maps.Marker({position: TripFactory.originLatLng,map: map});
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
+  $scope.hidden=false;
+
+  var alertPopup = $ionicPopup.alert({
+    title: 'Instrucción',
+    template: 'Da click en el mapa en los lugare clave de tu ruta'
+  });
+
+  alertPopup.then(function(res) {
+    console.log('Thank you for not eating my delicious ice cream cone');
+  });
+
 
   map.addListener('click', function(e) {
-
     placeMarkerAndPanTo(e.latLng, map);
     wayPoints.push({location:e.latLng});
   });
-
   $scope.generateRoute = function(){
     TripFactory.route.waypoints = wayPoints;
-    console.log(TripFactory.route.waypoints);
-
-    // calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
+    calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
     $scope.hidden = true;
   }
-
   $scope.acceptRoute = function(){
     TripFactory.route.waypoints=wayPoints;
     TripFactory.acceptedRoute='Ruta Aceptada';
     ClickValidationFactory.acceptedRoute=true;
-    $ionicHistory.goBack(-2);
+    $state.go("jaunter.scheduleTrip");
+    // $ionicHistory.goBack(-2);
   }
   directionsDisplay.setMap(map);
   $scope.map = map;
@@ -191,7 +257,6 @@ function deleteMarkers() {
   markers = [];
 }
 function calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,origin,destination) {
-
   directionsService.route({
     origin: origin,
     destination: destination,
@@ -213,6 +278,7 @@ function placeMarkerAndPanTo(latLng, map) {
     animation: google.maps.Animation.DROP,
     label:labels[labelIndex++ % labels.length]
   });
+  map.setZoom(15);
   map.panTo(latLng);
 }
 function placeMarkerAndRadius(latLng, map,range) {
@@ -224,7 +290,6 @@ function placeMarkerAndRadius(latLng, map,range) {
   });
   map.setZoom(15);
   // Add circle overlay and bind to marker
-
   var circle = new google.maps.Circle({
     map: map,
     center:latLng,
@@ -251,6 +316,7 @@ function geocodeAddress(geocoder, resultsMap,address) {
         animation: google.maps.Animation.DROP,
         position: results[0].geometry.location
       });
+      resultsMap.setZoom(15);
       markers.push(marker);
 
     } else {

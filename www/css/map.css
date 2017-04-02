@@ -1,7 +1,11 @@
-/*#inputAddress{
-  width:  90%;
-}*/
-#acceptRoute,#customRoute,#cleanMap,#generateRoute{
 
-display: inline;
+
+.marginMap{
+  margin-bottom: 1.6em;
+}
+.footerBtn{
+   width:98%;
+}
+.transparent{
+  background: transparent;
 }
