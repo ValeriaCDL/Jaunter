@@ -49,8 +49,14 @@ angular.module('jaunter.map',[])
           }else if(school.value!=""){
             TripFactory.originType = false;
           }
+          //datos de localizacion
           TripFactory.origin = results[1].formatted_address;
           TripFactory.originLatLng = {
+            "lat": results[1].geometry.location.lat(),
+            "lng": results[1].geometry.location.lng()
+          };
+          //datos de ruta
+          TripFactory.route.startpoint = {
             "lat": results[0].geometry.location.lat(),
             "lng": results[0].geometry.location.lng()
           };
@@ -128,8 +134,14 @@ $scope.acceptMap = function(){
     geocoder.geocode({'location': destination}, function(results, status) {
       if (status === google.maps.GeocoderStatus.OK) {
         if (results[1]) {
+          //datos de localizacion
           TripFactory.destination = results[1].formatted_address;
           TripFactory.destinationLatLng = {
+            "lat": results[1].geometry.location.lat(),
+            "lng": results[1].geometry.location.lng()
+          };
+          //datos de ruta
+          TripFactory.route.endpoint = {
             "lat": results[0].geometry.location.lat(),
             "lng": results[0].geometry.location.lng()
           };
@@ -153,9 +165,10 @@ $scope.acceptMap = function(){
   var map = new google.maps.Map(document.getElementById("googleRouteMap"), mapOptions);
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
-  var origin = new google.maps.LatLng(TripFactory.originLatLng.lat,TripFactory.originLatLng.lng);
-  var destination = new google.maps.LatLng(TripFactory.destinationLatLng.lat,TripFactory.destinationLatLng.lng);
-  calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,"Valle Dorado Ensenada","CETYS Ensenada");
+  //To do: revisar que TripFactory.route.startpoint y endpoint no esten vacios
+  var origin = new google.maps.LatLng(TripFactory.route.startpoint.lat,TripFactory.route.startpoint.lng);
+  var destination = new google.maps.LatLng(TripFactory.route.endpoint.lat,TripFactory.route.endpoint.lng);
+  calculateAndDisplayRouteGoogle(directionsService,directionsDisplay,origin,destination);
   directionsDisplay.setMap(map);
   $scope.map = map;
   $scope.acceptRoute = function(){
@@ -207,8 +220,8 @@ $scope.acceptMap = function(){
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13,mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("customRouteMap"), mapOptions);
-  var destinationMarker = new google.maps.Marker({position: TripFactory.destinationLatLng,map: map});
-  var originMarker = new google.maps.Marker({position: TripFactory.originLatLng,map: map});
+  var destinationMarker = new google.maps.Marker({position: TripFactory.route.endpoint,map: map});
+  var originMarker = new google.maps.Marker({position: TripFactory.route.startpoint,map: map});
   var directionsService = new google.maps.DirectionsService;
   var directionsDisplay = new google.maps.DirectionsRenderer;
   $scope.hidden=false;
@@ -229,7 +242,7 @@ $scope.acceptMap = function(){
   });
   $scope.generateRoute = function(){
     TripFactory.route.waypoints = wayPoints;
-    calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.originLatLng,TripFactory.destinationLatLng);
+    calculateAndDisplayRoute(directionsService, directionsDisplay,wayPoints,TripFactory.route.startpoint,TripFactory.route.endpoint);
     $scope.hidden = true;
   }
   $scope.acceptRoute = function(){

@@ -201,30 +201,30 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 })
 .factory('TripFactory', function(){
   var trip = {
-    days:{},
+    days:{}, //en el api es un array, lo cambio justo antes de guardarlo
     userType:true, //true=conductor, false=pasajero
-    origin:'',
-    originLatLng: {},
-    destination:'',
-    destinationLatLng:{},
+    origin:'', //el nombre del origen (colonia)
+    originLatLng: {}, //results[1] de google (la colonia) para la localizacion
+    destination:'', //el nombre del destino (colonia)
+    destinationLatLng:{}, //results[1] de google (la colonia) para la localizacion
     route:{
-      startpoint:{
+      startpoint:{    //results[0] de google (la calle) para la ruta
         "lat": "",
         "lng": ""
       },
-      endpoint:{
+      endpoint:{  //results[0] de google (la calle) para la ruta
         "lat": "",
         "lng": ""
       },
-      waypoints:null
+      waypoints:null  //por si el usuario hace su propia ruta que no es la generada por google
     },
     acceptedRoute:'',
     departureTime:'',
     departureTimeText:'',
     arrivalTime:'',
     arrivalTimeText:'',
-    isPopulated:false,
-    originType:true //true el origen es diferente de sede
+    isPopulated:false, //bandera de validacion de todos los campos
+    originType:true //true = el origen es diferente de sede
   };
   return trip;
 })
@@ -238,59 +238,72 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   };
   return valid;
 })
-.factory('TripSvc',function($http,Constants,TripFactory,LocalizationSvc,SessionSvc,HqSvc){
+.factory('TripSvc',function($http,Constants,TripFactory,LocalizationSvc,HqSvc){
   var url =Constants.BaseUrl;
-  var trip, localization, hq, session; //hq es la sede
+  var trip, localization, hq; //hq es la sede
 
   var create = function(){
-	//Evitar viajes por cambios en BD
-	return;
-    //config_sesion (viaje) tiene una sesion,
-    //y esa sesión tiene una localización y una sede, entonces:
+    //config_sesion (viaje) tiene una localización y una sede (o sede y sede), entonces:
     //1.TripFactory ya debe estar lleno
     if(!TripFactory.isPopulated)
       return;
     //2.Creo el objeto localizacion (la api esta en espa;ol y esos son los nombres)
-    //POR HACER: verificar que el objeto no esta ya creado
+    //POR HACER: verificar que el objeto localizacion no esta ya creado
     localization = {
     "nombre": TripFactory.origin,
     "coordenadas": TripFactory.originLatLng
     };
+    //find
+    // LocalizationSvc.Find(localization["nombre"]).then(function(response) {
+    //   //si no hay nada lanza un error que no puedo cachar :C
+    // });
+
     LocalizationSvc.Create(localization).then(function(response) {
       localization = response;
       //3.La sede ya debe estar creada solo tomo el id de.. cuando pongamos a elegir al usuario
       //es el Cetys Ensenada
       //en este caso el destino es la sede
+      //POR HACER: Que la sede no este hardcodeada
       HqSvc.Get("571587029bbd43cf34ca5793").then(function(response) {
         hq = response;
-        //4.ligo sede y localizacion con mi sesion
-        session = {
-        "ruta":{ "waypoints":TripFactory.route.waypoints},
-        "id_localizacion": localization["id"],
-        "id_sede": hq["id"]
-        };
-        SessionSvc.Create(session).then(function(response) {
-          session = response;
-          //5.ligo mi sesion con mi config_sesion (viaje)
-          var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();
-          var t2 = TripFactory.destination.split(","); t2.pop();t2.pop();
 
+          //preparo los datos...
+          var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();t1.pop();
+          var t2 = TripFactory.destination.split(","); t2.pop();t2.pop();t2.pop();
+          var dayResult;
+          //////////
+          if (!(TripFactory.days instanceof Array)){ //si no es un array...
+            // var TripFactory.days = {
+            //     "lun": false,
+            //     "mar": false,...
+            //   }
+            function hasDay(element) {
+                return TripFactory.days[element] == true;
+            }
+            dayResult = Object.keys(TripFactory.days).filter(hasDay); //["mie"]
+          } else {
+            dayResult=TripFactory.days;
+          }
+          //////
+          //4. Ligo mis datos y localization y sede a viaje
+          //POR HACER: intercalar entre sede y localizacion para que sean origen o destino
           trip = {
-          "nombre":t1+" a "+t2,
-          "dias":TripFactory.days,
-          "hora_salida": TripFactory.departureTimeText,
-          "hora_llegada": TripFactory.arrivalTimeText,
-          "tipo_usuario": TripFactory.userType,
-          "id_usuario": "5714434c429d899231431566", //no se quien es pero es requerido
-          "id_institucion": hq["id_institucion"],
-          "id_sesion": session["id"]
-          };
+              "nombre":t1+" a "+t2,
+              "dias": dayResult,
+              "hora_salida": TripFactory.departureTimeText,
+              "hora_llegada": TripFactory.arrivalTimeText,
+              "tipo_usuario": TripFactory.userType,
+              "ruta": TripFactory.route,
+              "id_origen": localization["id"], //debe ser localizacion o sede
+              "id_destino": hq["id"], //debe ser localizacion o sede (es el cetys)
+              "id_usuario": "57144936499020ce31940fc3",
+              "id_institucion": "57140c13b1e821443037b692"
+            };
           //no se como guardar la ruta.. ni siquiera se cual es el objeto o array de las rutas... :C
           saveTrip(trip).then(function(response) {
             trip = response;
             return trip; //lo regreso??
           }); //trip
-        }); //session
       }); //hq
     }); //localization
 
@@ -301,6 +314,22 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       +Constants.TemporalToken,data)
     .then(function(r){return r.data;}
       ,function(r){ return "Error:"+r.error; });
+  };
+
+  var coincidences = function(tripData){
+    var match = {
+      "hora_llegada": tripData["hora_llegada"],
+      "tipo_usuario": !tripData["tipo_usuario"],
+      "id_destino": tripData["id_destino"], // debe ser una sede o una localizacion,
+      "id_institucion": tripData["id_institucion"]
+    }
+    return $http.get(url+"Config_Sesions?filter="+match+"&access_token="+Constants.TemporalToken)
+    .then(function(response){
+      console.log(response.data);
+      for(var trip in response.data){
+        console.log(trip["id_origen"]);
+      }
+    });
   };
 
   return {
@@ -317,7 +346,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         return response.data;
       });
     },
-    Create: create  //la funcion definida arriba
+    Create: create,  //la funcion definida arriba
+    GetCoincidence: coincidences
   };
 })
 .factory('HqSvc',function($http,Constants){
@@ -352,34 +382,17 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         return response.data;
       });
     },
+    Find: function(name) {
+      var query = '{"where":{"nombre":"'+name+'"}}';
+      return $http.get(url+"Localizaciones/findOne?filter="+query+"&access_token="+Constants.TemporalToken)
+      .then(function(r){return r.data;}
+        ,function(r){ return "Error:"+r; });
+    },
     Create: function(data) {
       return $http.post(url+"Localizaciones?access_token="
         +Constants.TemporalToken,data)
       .then(function(r){return r.data;}
         ,function(r){ return "Error:"+r; });
-    }
-  };
-})
-.factory('SessionSvc',function($http,Constants){
-  var url =Constants.BaseUrl;
-  return {
-    All: function() {
-      return $http.get(url+"Sesiones?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      });
-    },
-    Get: function(id) {
-      return $http.get(url+"Sesiones/"+id+"?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      });
-    },
-    Create: function(data) {
-      return $http.post(url+"Sesiones?access_token="
-        +Constants.TemporalToken,data)
-      .then(function(r){return r.data;}
-        ,function(r){ return "Error:"+r.error; });
     }
   };
 });
