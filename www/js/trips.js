@@ -316,18 +316,13 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       ,function(r){ return "Error:"+r.error; });
   };
 
+  //No se si funciona :S no lo he probado no se donde
   var coincidences = function(tripData){
-    var match = {
-      "hora_llegada": tripData["hora_llegada"],
-      "tipo_usuario": !tripData["tipo_usuario"],
-      "id_destino": tripData["id_destino"], // debe ser una sede o una localizacion,
-      "id_institucion": tripData["id_institucion"]
-    }
-    return $http.get(url+"Config_Sesions?filter="+match+"&access_token="+Constants.TemporalToken)
+    return $http.get(url+"Config_Sesions/coincidencias?viaje="+tripData+"&access_token="+Constants.TemporalToken)
     .then(function(response){
       console.log(response.data);
       for(var trip in response.data){
-        console.log(trip["id_origen"]);
+        console.log(trip["nombre"]);
       }
     });
   };
