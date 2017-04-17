@@ -10,10 +10,7 @@
     <ion-content id="destinationMap" class="marginMap"></ion-content></ion-content>
 
     <div  class="bar bar-footer">
-    <select class="col"  id="schoolSelectDestination" ng-hide="schoolHide">
-      <option value="" selected >Sede</option>
-      <option value="UABC Valle Dorado Ensenada">UABC Valle Dorado</option>
-      <option "UABC Ensenada">UABC Sauzal</option>
+    <select class="col"  id="schoolSelectDestination" ng-hide="schoolHide" ng-model="selectedHq" ng-options="x.nombre for x in sedes">
     </select>
     <select class="col"  id="zoneSelectDestination" ng-hide="zoneHide">
       <option selected value="">Zona</option>

@@ -79,7 +79,7 @@ angular.module('jaunter.map',[])
 
   }
 })
-.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state){
+.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state,HqSvc){
   if(TripFactory.originType){
     $scope.schoolHide=false;
     $scope.zoneHide=true;
@@ -87,6 +87,11 @@ angular.module('jaunter.map',[])
     $scope.schoolHide=false;
     $scope.zoneHide=false;
   }
+
+  HqSvc.All().then(function(s) {
+    $scope.sedes = s;
+  });
+
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
   var mapOptions = {center: ensenadaLatLng,zoom: 13, mapTypeId: google.maps.MapTypeId.ROADMAP};
   var map = new google.maps.Map(document.getElementById("destinationMap"), mapOptions);
@@ -101,18 +106,19 @@ angular.module('jaunter.map',[])
     zone.value="";
   });
 $scope.searchAddressMap = function(){
-  if(zone.value!="" && school.value==""){
+  if (zone.value!="" && school.value==""){
     deleteMarkers();
-  geocodeAddress(geocoder, map,zone.value);
-  }else if (school.value!="" && zone.value=="") {
-  deleteMarkers();
-    geocodeAddress(geocoder, map,school.value);
-}else if (school.value!="" && zone.value!="") {
-  zone.value="";
-  school.value="";
-  deleteMarkers();
-  alert("Solo selecciona una opcion");
-}
+    geocodeAddress(geocoder, map,zone.value);
+  } else if (school.value!="" && zone.value=="") {
+    deleteMarkers();
+    geocodeAddress(geocoder, map,$scope.selectedHq.nombre); ////////////////////SE NECESITA UNA SUPER REFACTORIZACION
+    TripFactory.hq = $scope.selectedHq;
+  } else if (school.value!="" && zone.value!="") {
+    zone.value="";
+    school.value="";
+    deleteMarkers();
+    alert("Solo selecciona una opcion");
+  }
   $scope.schoolHide=true;
   $scope.zoneHide=true;
   $scope.hidden = true;

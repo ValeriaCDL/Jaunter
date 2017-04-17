@@ -201,7 +201,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
 })
 .factory('TripFactory', function(){
   var trip = {
-    days:{}, //en el api es un array, lo cambio justo antes de guardarlo
+    days:{}, //en el api es un array, lo cambio justo antes de guardarlo //POR HACER: cambiarlo de regreso
     userType:true, //true=conductor, false=pasajero
     origin:'', //el nombre del origen (colonia)
     originLatLng: {}, //results[1] de google (la colonia) para la localizacion
@@ -224,7 +224,8 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     arrivalTime:'',
     arrivalTimeText:'',
     isPopulated:false, //bandera de validacion de todos los campos
-    originType:true //true = el origen es diferente de sede
+    originType:true, //true = el origen es diferente de sede
+    hq:{} //El objeto sede (o localizacion) que elija el usuario
   };
   return trip;
 })
@@ -243,70 +244,64 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   var trip, localization, hq; //hq es la sede
 
   var create = function(){
-    //config_sesion (viaje) tiene una localización y una sede (o sede y sede), entonces:
+    //config_sesion (viaje) tiene una sede y una localización (o sede y sede), entonces:
     //1.TripFactory ya debe estar lleno
     if(!TripFactory.isPopulated)
       return;
-    //2.Creo el objeto localizacion (la api esta en espa;ol y esos son los nombres)
-    //POR HACER: verificar que el objeto localizacion no esta ya creado
+
+    //2.La sede ya debe estar creada solo tomo el objeto de la seleccion del usuario
+    //POR HACER: Que pueda intercalarse entre origen y destino
+    hq = TripFactory.hq;
+
+    //3.Busco o creo el objeto localizacion
     localization = {
     "nombre": TripFactory.origin,
     "coordenadas": TripFactory.originLatLng
     };
-    //find
-    // LocalizationSvc.Find(localization["nombre"]).then(function(response) {
-    //   //si no hay nada lanza un error que no puedo cachar :C
-    // });
+    LocalizationSvc.Find(localization["nombre"]).then(function(response) {
+      if(response){
+        localization = response;
+        makeTrip();
+      } else {
+        LocalizationSvc.Create(localization).then(function(response) {
+          localization = response;
+          makeTrip();
+        });
+      }
+    });
 
-    LocalizationSvc.Create(localization).then(function(response) {
-      localization = response;
-      //3.La sede ya debe estar creada solo tomo el id de.. cuando pongamos a elegir al usuario
-      //es el Cetys Ensenada
-      //en este caso el destino es la sede
-      //POR HACER: Que la sede no este hardcodeada
-      HqSvc.Get("571587029bbd43cf34ca5793").then(function(response) {
-        hq = response;
-
-          //preparo los datos...
-          var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();t1.pop();
-          var t2 = TripFactory.destination.split(","); t2.pop();t2.pop();t2.pop();
-          var dayResult;
-          //////////
-          if (!(TripFactory.days instanceof Array)){ //si no es un array...
-            // var TripFactory.days = {
-            //     "lun": false,
-            //     "mar": false,...
-            //   }
-            function hasDay(element) {
-                return TripFactory.days[element] == true;
-            }
-            dayResult = Object.keys(TripFactory.days).filter(hasDay); //["mie"]
-          } else {
-            dayResult=TripFactory.days;
-          }
-          //////
-          //4. Ligo mis datos y localization y sede a viaje
-          //POR HACER: intercalar entre sede y localizacion para que sean origen o destino
-          trip = {
-              "nombre":t1+" a "+t2,
-              "dias": dayResult,
-              "hora_salida": TripFactory.departureTimeText,
-              "hora_llegada": TripFactory.arrivalTimeText,
-              "tipo_usuario": TripFactory.userType,
-              "ruta": TripFactory.route,
-              "id_origen": localization["id"], //debe ser localizacion o sede
-              "id_destino": hq["id"], //debe ser localizacion o sede (es el cetys)
-              "id_usuario": "57144936499020ce31940fc3",
-              "id_institucion": "57140c13b1e821443037b692"
-            };
-          //no se como guardar la ruta.. ni siquiera se cual es el objeto o array de las rutas... :C
-          saveTrip(trip).then(function(response) {
-            trip = response;
-            return trip; //lo regreso??
-          }); //trip
-      }); //hq
-    }); //localization
-
+    //4. Ligo mis datos y localization y sede a viaje
+    var makeTrip = function(){
+      //preparo los datos...
+      var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();t1.pop();
+      var t2 = TripFactory.destination.split(","); t2.pop();t2.pop();t2.pop();
+      var dayResult;
+      if (!(TripFactory.days instanceof Array)){ //si no es un array...
+        // var TripFactory.days = {"lun": false,"mar": false,"mie": true...}
+        function hasDay(element) {
+            return TripFactory.days[element] == true;
+        }
+        dayResult = Object.keys(TripFactory.days).filter(hasDay); //["mie"]
+      } else {
+        dayResult=TripFactory.days;
+      }
+      trip = {
+          "nombre":t1+" a "+t2,
+          "dias": dayResult,
+          "hora_salida": TripFactory.departureTimeText,
+          "hora_llegada": TripFactory.arrivalTimeText,
+          "tipo_usuario": TripFactory.userType,
+          "ruta": TripFactory.route,
+          "id_origen": localization["id"], //debe ser localizacion o sede
+          "id_destino": hq["id"], //debe ser localizacion o sede
+          "id_usuario": "57144936499020ce31940fc3", //mmm..arreglar luego..
+          "id_institucion": "57140c13b1e821443037b692"
+        };
+        saveTrip(trip).then(function(response) {
+          trip = response;
+          console.log("Trip created Succesfully");
+        });
+    };
   };
 
   var saveTrip = function(data) {
@@ -381,13 +376,13 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
       var query = '{"where":{"nombre":"'+name+'"}}';
       return $http.get(url+"Localizaciones/findOne?filter="+query+"&access_token="+Constants.TemporalToken)
       .then(function(r){return r.data;}
-        ,function(r){ return "Error:"+r; });
+        ,function(err){ console.log(err.data); return null;});
     },
     Create: function(data) {
       return $http.post(url+"Localizaciones?access_token="
         +Constants.TemporalToken,data)
       .then(function(r){return r.data;}
-        ,function(r){ return "Error:"+r; });
+        ,function(err){ return err.data; });
     }
   };
 });
