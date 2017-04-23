@@ -14,6 +14,7 @@
   background: #089c46 ;
   z-index: auto;
 }
+
 .fabBtn:before {
   background-color: #27ae60;
   color: white;
@@ -38,7 +39,7 @@
 }
 .centerText{
   text-align: center;
-  display: block;
+
 }
 .uppercase{
   text-transform: uppercase;

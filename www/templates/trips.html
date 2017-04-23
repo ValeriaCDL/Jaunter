@@ -10,36 +10,42 @@
     </ion-item>
   </div> -->
   <div class="card" ng-repeat="trip in trips" >
-    <div id='{{trip.id}}'ng-click="detailTrip($event)" class="item item-text-wrap">
+    <div id="trip.id" ng-click="detailTrip($event)" class="item item-text-wrap">
       <div class="row">
-        <p class="col-75">
+        <p class="col">
           {{trip.nombre}}
         </p>
       </div>
       <hr />
       <div class="row">
-        <p class="col-15 days" ><strong >{{trip.dias.dom}}</strong></p>
-        <p class="col-15 days"><strong >{{trip.dias.lun}}</strong></p>
-        <p class="col-15 days"><strong >{{trip.dias.mar}}</strong></p>
-        <p class="col-15 days"><strong >{{trip.dias.mie}}</strong></p>
-        <p class="col-15 days"><strong>{{trip.dias.jue}}</strong></p>
-        <p class="col-15 days"><strong>{{trip.dias.vie}}</strong></p>
-        <p class="col-15 days"><strong>{{trip.dias.sab}}</strong></p>
+        <p class="col" ng-if="trip.dias[0]=='lun'"><strong >Lun</strong></p>
+        <p class="col" ng-if="trip.dias[0]==null">Lun</p>
+        <p class="col" ng-if="trip.dias[1]=='mar'"><strong >Mar</strong></p>
+        <p class="col" ng-if="trip.dias[1]==null">Mar</p>
+        <p class="col" ng-if="trip.dias[2]=='mie'"><strong >Mier</strong></p>
+        <p class="col" ng-if="trip.dias[2]==null">Mier</p>
+        <p class="col" ng-if="trip.dias[3]=='jue'"><strong >Jue</strong></p>
+        <p class="col" ng-if="trip.dias[3]==null">Jue</p>
+        <p class="col" ng-if="trip.dias[4]=='vie'"><strong>Vie</strong></p>
+        <p class="col" ng-if="trip.dias[4]==null">Vie</p>
+        <p class="col" ng-if="trip.dias[5]=='sab'"><strong>Sab</strong></p>
+          <p class="col" ng-if="trip.dias[5]==null">Sab</p>
+        <p class="col" ng-if="trip.dias[6]=='dom'"><strong>Dom</strong></p>
+          <p class="col" ng-if="trip.dias[6]==null">Dom</p>
       </div>
       <hr />
       <div class="row">
-        <p class="col-50">
+        <p class="col">
           <strong>Hora Salida: </strong>{{trip.hora_salida}}
         </p>
-        <p class="col-50">
+        <p class="col">
           <strong>Hora Llegada: </strong>{{trip.hora_llegada}}
         </p>
       </div>
       <hr />
       <div class="row">
-        <p class="col-75" style="text-align:center;">
-          <strong>{{trip.tipo_usuario}}</strong>
-        </p>
+        <p class="col" style="text-align:center;" ng-if="trip.tipo_usuario==false"><strong>Pasajero</strong></p>
+        <p class="col" style="text-align:center;" ng-if="trip.tipo_usuario==true"><strong>Conductor</strong></p>
 
       </div>
 

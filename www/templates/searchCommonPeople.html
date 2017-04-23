@@ -1,0 +1,22 @@
+<ion-view view-title="Personas">
+
+  <ion-nav-buttons side="right">
+    <button type="button" class="button button-clear" ng-hide="hidden" ng-click="acceptMap()"> Buscar  </button>
+    <button type="button" class="button button-clear" ng-hide="!hidden" ng-click="searchAddressMap()"> Reintentar  </button>
+  </ion-nav-buttons>
+  <ion-pane>
+    <ion-content>
+      <div class="card" ng-repeat="item in common" >
+        <div id="trip.id" ng-click="detailTrip($event)" class="item item-text-wrap">
+          <div class="row">
+            <p class="col">
+              {{trip.nombre}}
+            </p>
+          </div>
+
+          <hr />
+        </div>
+        </ion-content>
+
+  </ion-pane>
+</ion-view>
