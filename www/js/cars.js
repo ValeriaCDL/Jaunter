@@ -1,7 +1,7 @@
 var cars=[];
 angular.module('jaunter.cars', ['jaunter.shared'])
 
-.controller('CarsCtrl', function($scope,CarSvc,$state,$ionicPopup) {
+.controller('CarListCtrl', function($scope,CarSvc,$state,$ionicPopup) {
 
   CarSvc.All().then(function(c) {
     // console.log(c);
@@ -14,39 +14,8 @@ angular.module('jaunter.cars', ['jaunter.shared'])
   $scope.detailCar =function (event){
     var id = event.target.id;
     console.log(id);
-    // $scope.data = {};
-
- // An elaborate, custom popup
- // var myPopup = $ionicPopup.show({
- //   template:
- //    '<p><strong>Marca: </strong></p>'+car[id],
- //   title: 'Enter Wi-Fi Password',
- //   subTitle: 'Please use normal things',
- //   scope: $scope,
- //   buttons: [
- //     { text: 'Cancel' },
- //     {
- //       text: '<b>Save</b>',
- //       type: 'button-positive',
- //       onTap: function(e) {
- //         if (!$scope.data.wifi) {
- //           //don't allow the user to close unless he enters wifi password
- //           e.preventDefault();
- //         } else {
- //           return $scope.data.wifi;
- //         }
- //       }
- //     }
- //   ]
- // });
   }
 })
-.controller('CarCtrl', function($scope,$stateParams,CarSvc) {
-  //$scope.car = angular.fromJson($stateParams.car); //funciona..pero noseqpedo con la vista
-  $scope.car = CarSvc.Get($stateParams.carId);
-
-})
-
 .controller('CarCtrl', function($scope, $http,Constants,CarValidationFactory){
   // POR ahora casi todos los campos son obligatorios...
   $scope.hidden=true;
@@ -101,12 +70,12 @@ angular.module('jaunter.cars', ['jaunter.shared'])
     }
 
   }
-  $scope.post= function(obj){
-    $http.post(Constants.BaseUrl+"Autos?access_token="+Constants.TemporalToken,
-    obj).then(function(response){
-      console.log(response);
-    });
-  }
+  // $scope.post= function(obj){
+  //   $http.post(Constants.BaseUrl+"Autos?access_token="+Constants.TemporalToken,
+  //   obj).then(function(response){
+  //     console.log(response);
+  //   });
+  // }
 })
 .factory('CarValidationFactory', function(){
   var valid = {
@@ -120,29 +89,25 @@ angular.module('jaunter.cars', ['jaunter.shared'])
   return valid;
 })
 .factory('CarSvc',function($http,Constants){
-  var url =Constants.BaseUrl;
-  var cars;
+  var url =Constants.BaseUrl+"Cars";
   return {
     All: function() {
-      return $http.get(url+"Autos?access_token="+Constants.TemporalToken)
+      return $http.get(url+"?access_token="+Constants.TemporalToken)
       .then(function(response){
-        cars = response.data;
-        return cars;
+        return response.data;
       });
     },
-    Get: function(carId) {
-      ///Esto es propenso a error porque primero tengo q haber hecho el All
-      ///pero no se cuando se desaparece el objeto cars
-      if(!cars){
-        this.All(); /////////mmmmmm
-      } else {
-        for (var i = 0; i < cars.length; i++) {
-          if (cars[i].id === carId) {
-            return cars[i];
-          }
-        };
-      }
-      return null;
+    Get: function(id) {
+      return $http.get(url+"/"+id+"?access_token="+Constants.TemporalToken)
+      .then(function(response){
+        return response.data;
+      },function(err){ return err.data });
+    },
+    Create: function(data) {
+      return $http.post(url+"?access_token="
+        +Constants.TemporalToken,data)
+      .then(function(r){return r.data;}
+        ,function(err){ return err.data; });
     }
   };
 });

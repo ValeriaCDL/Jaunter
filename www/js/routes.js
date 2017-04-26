@@ -31,7 +31,7 @@ angular.module('jaunter.routes', [])
     views: {
       'menuContent': {
         templateUrl: 'templates/trips.html',
-        controller:'TripsCtrl'
+        controller:'TripListCtrl'
       }
     }
   })
@@ -94,7 +94,7 @@ angular.module('jaunter.routes', [])
     views: {
       'menuContent': {
         templateUrl: 'templates/Cars.html',
-        controller: 'CarsCtrl'
+        controller: 'CarListCtrl'
       }
     }
   })
@@ -108,15 +108,15 @@ angular.module('jaunter.routes', [])
       }
     }
   })
-  .state('jaunter.searchPeople', {
-    url: '/searchPeople',
-    views: {
-      'menuContent': {
-        templateUrl: 'templates/searchPeopleMap.html',
-        controller: 'searchPeopleCtrl'
-      }
-    }
-  })
+  // .state('jaunter.searchPeople', {
+  //   url: '/searchPeople',
+  //   views: {
+  //     'menuContent': {
+  //       templateUrl: 'templates/searchPeopleMap.html',
+  //       controller: 'searchPeopleCtrl'
+  //     }
+  //   }
+  // })
   .state('jaunter.car', {
     url: '/Cars/:carId',
     views: {

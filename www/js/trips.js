@@ -161,7 +161,7 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   };
 
 })
-.controller('TripsCtrl',function($scope,TripSvc,$state,$ionicPopup,TripFactory){
+.controller('TripListCtrl',function($scope,TripSvc,$state,$ionicPopup,TripFactory){
   TripSvc.All().then(function(c) {
     $scope.trips = c;
   });
@@ -239,12 +239,11 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   };
   return valid;
 })
-.factory('TripSvc',function($http,Constants,TripFactory,LocalizationSvc,HqSvc){
-  var url =Constants.BaseUrl;
-  var trip, localization, hq; //hq es la sede
+.factory('TripSvc',function($http,Constants,TripFactory,LocationSvc,BranchSvc){
+  var url =Constants.BaseUrl+"Trips";
+  var trip, location, hq; //hq es la branch
 
   var create = function(){
-    //config_sesion (viaje) tiene una sede y una localización (o sede y sede), entonces:
     //1.TripFactory ya debe estar lleno
     if(!TripFactory.isPopulated)
       return;
@@ -254,23 +253,23 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
     hq = TripFactory.hq;
 
     //3.Busco o creo el objeto localizacion
-    localization = {
-    "nombre": TripFactory.origin,
-    "coordenadas": TripFactory.originLatLng
+    location = {
+    "name": TripFactory.origin,
+    "coordinates": TripFactory.originLatLng
     };
-    LocalizationSvc.Find(localization["nombre"]).then(function(response) {
+    LocationSvc.Find(location["name"]).then(function(response) {
       if(response){
-        localization = response;
+        location = response;
         makeTrip();
       } else {
-        LocalizationSvc.Create(localization).then(function(response) {
-          localization = response;
+        LocationSvc.Create(location).then(function(response) {
+          location = response;
           makeTrip();
         });
       }
     });
 
-    //4. Ligo mis datos y localization y sede a viaje
+    //4. Ligo mis datos y location y sede a viaje
     var makeTrip = function(){
       //preparo los datos...
       var t1 = TripFactory.origin.split(","); t1.pop();t1.pop();t1.pop();
@@ -286,16 +285,16 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
         dayResult=TripFactory.days;
       }
       trip = {
-          "nombre":t1+" a "+t2,
-          "dias": dayResult,
-          "hora_salida": TripFactory.departureTimeText,
-          "hora_llegada": TripFactory.arrivalTimeText,
-          "tipo_usuario": TripFactory.userType,
-          "ruta": TripFactory.route,
-          "id_origen": localization["id"], //debe ser localizacion o sede
-          "id_destino": hq["id"], //debe ser localizacion o sede
-          "id_usuario": "57144936499020ce31940fc3", //mmm..arreglar luego..
-          "id_institucion": "57140c13b1e821443037b692"
+          "name":t1+" a "+t2,
+          "days": dayResult,
+          "departure_time": TripFactory.departureTimeText,
+          "arrival_time": TripFactory.arrivalTimeText,
+          "user_type": TripFactory.userType,
+          "route": TripFactory.route,
+          "id_origin": location["id"], //debe ser location o branch (sucursal/sede)
+          "id_destination": hq["id"], //debe ser localizacion o sede
+          "id_jaunter-user": "59001f2abe885c0011a4772e", //mmm..arreglar luego..
+          "id_institution": "59001e5bbe885c0011a4772c"
         };
         saveTrip(trip).then(function(response) {
           trip = response;
@@ -305,19 +304,19 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   };
 
   var saveTrip = function(data) {
-    return $http.post(url+"Config_Sesions?access_token="
+    return $http.post(url+"?access_token="
       +Constants.TemporalToken,data)
     .then(function(r){return r.data;}
-      ,function(r){ return "Error:"+r.error; });
+      ,function(err){ return err.data; });
   };
 
   //No se si funciona :S no lo he probado no se donde
   var coincidences = function(tripData){
-    return $http.get(url+"Config_Sesions/coincidencias?viaje="+tripData+"&access_token="+Constants.TemporalToken)
+    return $http.get(url+"/coincidences?trip="+tripData+"&access_token="+Constants.TemporalToken)
     .then(function(response){
       console.log(response.data);
       for(var trip in response.data){
-        console.log(trip["nombre"]);
+        console.log(trip["name"]);
       }
     });
   };
@@ -325,64 +324,18 @@ angular.module('jaunter.trips', ['ionic-timepicker'])
   return {
     ///POR HACER: debo regresar todas, pero con el filtro del usuario
     All: function() {
-      return $http.get(url+"Config_Sesions?access_token="+Constants.TemporalToken)
+      return $http.get(url+"?access_token="+Constants.TemporalToken)
       .then(function(response){
         return response.data;
       });
     },
     Get: function(id) {
-      return $http.get(url+"Config_Sesions/"+id+"?access_token="+Constants.TemporalToken)
+      return $http.get(url+"/"+id+"?access_token="+Constants.TemporalToken)
       .then(function(response){
         return response.data;
       });
     },
-    Create: create,  //la funcion definida arriba
+    Create: create,
     GetCoincidence: coincidences
-  };
-})
-.factory('HqSvc',function($http,Constants){
-  var url =Constants.BaseUrl;
-  return {
-    All: function() {
-      return $http.get(url+"Sedes?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      });
-    },
-    Get: function(id) {
-      return $http.get(url+"Sedes/"+id+"?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      },function(r){ return "Error:"+r; });
-    }
-  };
-})
-.factory('LocalizationSvc',function($http,Constants){
-  var url =Constants.BaseUrl;
-  return {
-    All: function() {
-      return $http.get(url+"Localizaciones?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      });
-    },
-    Get: function(id) {
-      return $http.get(url+"Localizaciones/"+id+"?access_token="+Constants.TemporalToken)
-      .then(function(response){
-        return response.data;
-      });
-    },
-    Find: function(name) {
-      var query = '{"where":{"nombre":"'+name+'"}}';
-      return $http.get(url+"Localizaciones/findOne?filter="+query+"&access_token="+Constants.TemporalToken)
-      .then(function(r){return r.data;}
-        ,function(err){ console.log(err.data); return null;});
-    },
-    Create: function(data) {
-      return $http.post(url+"Localizaciones?access_token="
-        +Constants.TemporalToken,data)
-      .then(function(r){return r.data;}
-        ,function(err){ return err.data; });
-    }
   };
 });

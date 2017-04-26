@@ -79,7 +79,7 @@ angular.module('jaunter.map',[])
 
   }
 })
-.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state,HqSvc){
+.controller('DestinationMapCtrl', function($scope,$ionicHistory,TripFactory,ClickValidationFactory,$state,BranchSvc){
   if(TripFactory.originType){
     $scope.schoolHide=false;
     $scope.zoneHide=true;
@@ -88,8 +88,8 @@ angular.module('jaunter.map',[])
     $scope.zoneHide=false;
   }
 
-  HqSvc.All().then(function(s) {
-    $scope.sedes = s;
+  BranchSvc.All().then(function(s) {
+    $scope.branches = s;
   });
 
   var ensenadaLatLng = new google.maps.LatLng(31.8544973,-116.6054236);
@@ -111,7 +111,7 @@ $scope.searchAddressMap = function(){
     geocodeAddress(geocoder, map,zone.value);
   } else if (school.value!="" && zone.value=="") {
     deleteMarkers();
-    geocodeAddress(geocoder, map,$scope.selectedHq.nombre); ////////////////////SE NECESITA UNA SUPER REFACTORIZACION
+    geocodeAddress(geocoder, map,$scope.selectedHq.name); ////////////////////SE NECESITA UNA SUPER REFACTORIZACION
     TripFactory.hq = $scope.selectedHq;
   } else if (school.value!="" && zone.value!="") {
     zone.value="";

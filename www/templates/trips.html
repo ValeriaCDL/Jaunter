@@ -13,39 +13,28 @@
     <div id="trip.id" ng-click="detailTrip($event)" class="item item-text-wrap">
       <div class="row">
         <p class="col">
-          {{trip.nombre}}
+          {{trip.name}}
         </p>
       </div>
       <hr />
       <div class="row">
-        <p class="col" ng-if="trip.dias[0]=='lun'"><strong >Lun</strong></p>
-        <p class="col" ng-if="trip.dias[0]==null">Lun</p>
-        <p class="col" ng-if="trip.dias[1]=='mar'"><strong >Mar</strong></p>
-        <p class="col" ng-if="trip.dias[1]==null">Mar</p>
-        <p class="col" ng-if="trip.dias[2]=='mie'"><strong >Mier</strong></p>
-        <p class="col" ng-if="trip.dias[2]==null">Mier</p>
-        <p class="col" ng-if="trip.dias[3]=='jue'"><strong >Jue</strong></p>
-        <p class="col" ng-if="trip.dias[3]==null">Jue</p>
-        <p class="col" ng-if="trip.dias[4]=='vie'"><strong>Vie</strong></p>
-        <p class="col" ng-if="trip.dias[4]==null">Vie</p>
-        <p class="col" ng-if="trip.dias[5]=='sab'"><strong>Sab</strong></p>
-          <p class="col" ng-if="trip.dias[5]==null">Sab</p>
-        <p class="col" ng-if="trip.dias[6]=='dom'"><strong>Dom</strong></p>
-          <p class="col" ng-if="trip.dias[6]==null">Dom</p>
+        <p class="col" ng-repeat="day in trip.days">
+          <strong>{{day.charAt(0).toUpperCase()+day.slice(1)}}</strong>
+        </p>
       </div>
       <hr />
       <div class="row">
         <p class="col">
-          <strong>Hora Salida: </strong>{{trip.hora_salida}}
+          <strong>Hora Salida: </strong>{{trip.departure_time}}
         </p>
         <p class="col">
-          <strong>Hora Llegada: </strong>{{trip.hora_llegada}}
+          <strong>Hora Llegada: </strong>{{trip.arrival_time}}
         </p>
       </div>
       <hr />
       <div class="row">
-        <p class="col" style="text-align:center;" ng-if="trip.tipo_usuario==false"><strong>Pasajero</strong></p>
-        <p class="col" style="text-align:center;" ng-if="trip.tipo_usuario==true"><strong>Conductor</strong></p>
+        <p class="col" style="text-align:center;" ng-if="trip.user_type==false"><strong>Pasajero</strong></p>
+        <p class="col" style="text-align:center;" ng-if="trip.user_type==true"><strong>Conductor</strong></p>
 
       </div>
 
